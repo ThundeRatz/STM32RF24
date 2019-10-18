@@ -20,14 +20,6 @@ rf24_t rf24_get_default_config(void) {
     };
 }
 
-void rf24_enable(rf24_t* rf24) {
-    HAL_GPIO_WritePin(rf24->ce_port, rf24->ce_pin, GPIO_PIN_SET);
-}
-
-void rf24_disable(rf24_t* rf24) {
-    HAL_GPIO_WritePin(rf24->ce_port, rf24->ce_pin, GPIO_PIN_RESET);
-}
-
 void rf24_set_channel(rf24_t* rf24, uint8_t ch) {
     ch = ch > 125 ? 125 : ch; // TODO define
     rf24_write_reg8(rf24, NRF24L01_REG_RF_CH, ch);
@@ -73,6 +65,36 @@ bool rf24_init(rf24_t* rf24) {
     rf24_write_reg8(rf24, NRF24L01_REG_CONFIG, reg_config.value);
 
     return ((setup != 0) && (setup != 0xff));
+}
+
+void rf24_power_up(rf24_t* rf24) {
+    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(rf24, NRF24L01_REG_CONFIG) };
+
+    if (reg_config.pwr_up == 1) {
+        return;
+    }
+
+    reg_config.pwr_up = 1;
+    rf24_write_reg8(rf24, NRF24L01_REG_CONFIG, reg_config.value);
+    HAL_Delay(5);
+}
+
+void rf24_power_down(rf24_t* rf24) {
+    if (reg_config.pwr_up == 0) {
+        return;
+    }
+
+    rf24_disable(rf24);
+    reg_config.pwr_up = 0;
+    rf24_write_reg8(rf24, NRF24L01_REG_CONFIG, reg_config.value);
+}
+
+void rf24_enable(rf24_t* rf24) {
+    HAL_GPIO_WritePin(rf24->ce_port, rf24->ce_pin, GPIO_PIN_SET);
+}
+
+void rf24_disable(rf24_t* rf24) {
+    HAL_GPIO_WritePin(rf24->ce_port, rf24->ce_pin, GPIO_PIN_RESET);
 }
 
 void rf24_set_retries(rf24_t* rf24, uint8_t delay, uint8_t count) {
@@ -126,18 +148,6 @@ void rf24_flush_rx(rf24_t* rf24) {
 
 void rf24_flush_tx(rf24_t* rf24) {
     rf24_send_command(rf24, NRF24L01_COMM_FLUSH_TX);
-}
-
-void rf24_power_up(rf24_t* rf24) {
-    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(rf24, NRF24L01_REG_CONFIG) };
-
-    if (reg_config.pwr_up == 1) {
-        return;
-    }
-
-    reg_config.pwr_up = 1;
-    rf24_write_reg8(rf24, NRF24L01_REG_CONFIG, reg_config.value);
-    HAL_Delay(5);
 }
 
 void rf24_begin_transaction(rf24_t* rf24) {

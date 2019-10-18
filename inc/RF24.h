@@ -37,6 +37,10 @@ rf24_t rf24_get_default_config(void);
 
 bool rf24_init(rf24_t* rf24);
 
+void rf24_power_up(rf24_t* rf24);
+
+void rf24_power_down(rf24_t* rf24);
+
 void rf24_enable(rf24_t* rf24);
 
 void rf24_disable(rf24_t* rf24);
@@ -48,8 +52,6 @@ bool rf24_set_datarate(rf24_t* rf24, rf24_datarate_t datarate);
 void rf24_flush_rx(rf24_t* rf24);
 
 void rf24_flush_tx(rf24_t* rf24);
-
-void rf24_power_up(rf24_t* rf24);
 
 void rf24_read_all_registers(rf24_t* rf24);
 
