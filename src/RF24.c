@@ -39,7 +39,7 @@ uint8_t rf24_get_channel(rf24_t* rf24) {
     reg.value = rf24_read_reg8(rf24, NRF24L01_REG_RF_CH);
     return reg.rf_ch;
 }
-//curto cajado melado
+
 bool rf24_init(rf24_t* rf24) {
     rf24_enable(rf24);
     rf24_end_transaction(rf24);

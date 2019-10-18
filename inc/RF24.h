@@ -63,7 +63,7 @@ void rf24_print_status(rf24_t* rf24);
 void rf24_begin_transaction(rf24_t* rf24);
 
 void rf24_end_transaction(rf24_t* rf24);
-//curto cajado melado
+
 nrf24l01_reg_status_t rf24_send_command(rf24_t* rf24, nrf24l01_spi_commands_t command);
 
 nrf24l01_reg_status_t rf24_read_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buf, uint8_t len);

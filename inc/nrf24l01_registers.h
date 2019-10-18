@@ -79,7 +79,6 @@ typedef enum nrf24l01_registers {
 #define FEATURE 0x1D
 
 /* Bit Mnemonics */
-//curto cajado melado
 #define MASK_RX_DR 6
 #define MASK_TX_DS 5
 #define MASK_MAX_RT 4
