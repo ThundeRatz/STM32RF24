@@ -20,20 +20,7 @@ rf24_t rf24_get_default_config(void) {
     };
 }
 
-void rf24_set_channel(rf24_t* rf24, uint8_t ch) {
-    ch = ch > 125 ? 125 : ch; // TODO define
-    rf24_write_reg8(rf24, NRF24L01_REG_RF_CH, ch);
-    rf24->channel = ch;
-}
-
-uint8_t rf24_get_channel(rf24_t* rf24) {
-    nrf24l01_reg_rf_ch_t reg;
-    reg.value = rf24_read_reg8(rf24, NRF24L01_REG_RF_CH);
-    return reg.rf_ch;
-}
-
 bool rf24_init(rf24_t* rf24) {
-    rf24_enable(rf24);
     rf24_end_transaction(rf24);
 
     HAL_Delay(5);
@@ -63,6 +50,7 @@ bool rf24_init(rf24_t* rf24) {
     nrf24l01_reg_config_t reg_config = { rf24_read_reg8(rf24, NRF24L01_REG_CONFIG) };
     reg_config.prim_rx = 0;
     rf24_write_reg8(rf24, NRF24L01_REG_CONFIG, reg_config.value);
+    rf24_enable(rf24);
 
     return ((setup != 0) && (setup != 0xff));
 }
@@ -80,6 +68,8 @@ void rf24_power_up(rf24_t* rf24) {
 }
 
 void rf24_power_down(rf24_t* rf24) {
+    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(rf24, NRF24L01_REG_CONFIG) };
+    
     if (reg_config.pwr_up == 0) {
         return;
     }
@@ -95,6 +85,18 @@ void rf24_enable(rf24_t* rf24) {
 
 void rf24_disable(rf24_t* rf24) {
     HAL_GPIO_WritePin(rf24->ce_port, rf24->ce_pin, GPIO_PIN_RESET);
+}
+
+void rf24_set_channel(rf24_t* rf24, uint8_t ch) {
+    ch = ch > 125 ? 125 : ch; // TODO define
+    rf24_write_reg8(rf24, NRF24L01_REG_RF_CH, ch);
+    rf24->channel = ch;
+}
+
+uint8_t rf24_get_channel(rf24_t* rf24) {
+    nrf24l01_reg_rf_ch_t reg;
+    reg.value = rf24_read_reg8(rf24, NRF24L01_REG_RF_CH);
+    return reg.rf_ch;
 }
 
 void rf24_set_retries(rf24_t* rf24, uint8_t delay, uint8_t count) {
@@ -158,6 +160,8 @@ void rf24_end_transaction(rf24_t* rf24) {
     HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_SET);
 }
 
+
+// read/write register functions
 nrf24l01_reg_status_t rf24_send_command(rf24_t* rf24, nrf24l01_spi_commands_t command) {
     nrf24l01_reg_status_t status;
 
