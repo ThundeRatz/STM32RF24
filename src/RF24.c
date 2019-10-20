@@ -3,12 +3,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 #ifdef DEBUG
 #define PRINTF printf
 #else
 #define PRINTF(...)
 #endif
+
+uint32_t txDelay = 250;
 
 rf24_t rf24_get_default_config(void) {
     return (rf24_t) {
@@ -17,6 +20,7 @@ rf24_t rf24_get_default_config(void) {
                .addr_width = 5,
                .datarate = RF24_1MBPS,
                .channel = 76,
+               .pipe0_reading_address = {0, 0, 0, 0, 0},
     };
 }
 
@@ -50,7 +54,7 @@ bool rf24_init(rf24_t* rf24) {
     nrf24l01_reg_config_t reg_config = { rf24_read_reg8(rf24, NRF24L01_REG_CONFIG) };
     reg_config.prim_rx = 0;
     rf24_write_reg8(rf24, NRF24L01_REG_CONFIG, reg_config.value);
-    rf24_enable(rf24);
+    // rf24_enable(rf24); Vou fazer no start listening
 
     return ((setup != 0) && (setup != 0xff));
 }
@@ -69,7 +73,7 @@ void rf24_power_up(rf24_t* rf24) {
 
 void rf24_power_down(rf24_t* rf24) {
     nrf24l01_reg_config_t reg_config = { rf24_read_reg8(rf24, NRF24L01_REG_CONFIG) };
-    
+
     if (reg_config.pwr_up == 0) {
         return;
     }
@@ -110,7 +114,7 @@ bool rf24_set_datarate(rf24_t* rf24, rf24_datarate_t datarate) {
     rf24->datarate = datarate;
     nrf24l01_reg_rf_setup_t reg_rf_setup = { rf24_read_reg8(rf24, NRF24L01_REG_RF_SETUP) };
 
-    // TODO Coisas com txDelay
+    // TODO Coisas com txDelay (??)
 
     switch (datarate) {
         case RF24_1MBPS: {
@@ -140,7 +144,21 @@ bool rf24_set_datarate(rf24_t* rf24, rf24_datarate_t datarate) {
         return true;
     }
 
-    reg_rf_setup.value = temp_reg;
+    reg_rf_setup.value = temp_reg;  // Pra que isso se não faz nada dps?
+    return false;
+}
+
+bool rf24_set_output_power(rf24_t* rf24, rf24_output_power_t output_power) {
+    nrf24l01_reg_rf_setup_t reg_rf_setup = { rf24_read_reg8(rf24, NRF24L01_REG_RF_SETUP) };
+    reg_rf_setup.rf_pwr = output_power;
+    rf24_write_reg8(rf24, NRF24L01_REG_RF_SETUP, reg_rf_setup.value);
+
+    uint8_t temp_reg;
+
+    if ((temp_reg = rf24_read_reg8(rf24, NRF24L01_REG_RF_SETUP)) == reg_rf_setup.value) {
+        return true;
+    }
+
     return false;
 }
 
@@ -160,6 +178,100 @@ void rf24_end_transaction(rf24_t* rf24) {
     HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_SET);
 }
 
+
+void rf24_open_writing_pipe(rf24_t* p_rf24, uint8_t* address) {
+    rf24_write_register(p_rf24, NRF24L01_REG_RX_ADDR_P0, address, p_rf24->addr_width);
+    rf24_write_register(p_rf24, NRF24L01_REG_TX_ADDR, address, p_rf24->addr_width);
+    rf24_write_reg8(p_rf24,NRF24L01_REG_RX_PW_P0, p_rf24->payload_size);
+}
+
+static const uint8_t child_pipe[] = {RX_ADDR_P0, RX_ADDR_P1, RX_ADDR_P2, RX_ADDR_P3, RX_ADDR_P4, RX_ADDR_P5};
+
+static const uint8_t child_payload_size[] = {RX_PW_P0, RX_PW_P1, RX_PW_P2, RX_PW_P3, RX_PW_P4, RX_PW_P5};
+
+static const uint8_t child_pipe_enable[] = {ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_P4, ERX_P5};
+
+void rf24_open_reading_pipe(rf24_t* p_rf24, uint8_t pipe_number, uint8_t* address) {
+    // If this is pipe 0, cache the address.  This is needed because
+    // openWritingPipe() will overwrite the pipe 0 address, so
+    // startListening() will have to restore it.
+    if (pipe_number == 0) {
+        memcpy(p_rf24->pipe0_reading_address, address, p_rf24->addr_width);
+    }
+
+    if (pipe_number <= 5) {
+        // For pipes 2-5, only write the LSB
+        if (pipe_number <= 1) {
+            rf24_write_register(p_rf24, child_pipe[pipe_number], address, p_rf24->addr_width);
+        } else {
+            rf24_write_reg8(p_rf24, child_pipe[pipe_number], address[0]);
+        }
+
+        rf24_write_reg8(p_rf24, child_payload_size[pipe_number], p_rf24->payload_size);
+    }
+
+    // Note it would be more efficient to set all of the bits for all open
+    // pipes at once.  However, I thought it would make the calling code
+    // more simple to do it this way.
+    nrf24l01_reg_en_rxaddr_t reg_en_rx_addr = { rf24_read_reg8(p_rf24, NRF24L01_REG_EN_RXADDR) };
+    reg_en_rx_addr.value |= _BS(child_pipe_enable[pipe_number]);
+    rf24_write_reg8(p_rf24, NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
+}
+
+void rf24_close_reading_pipe(rf24_t* p_rf24, uint8_t pipe_number) {
+    nrf24l01_reg_en_rxaddr_t reg_en_rx_addr = { rf24_read_reg8(p_rf24, NRF24L01_REG_EN_RXADDR) };
+    reg_en_rx_addr.value &= (~_BS(child_pipe_enable[pipe_number]));
+    rf24_write_reg8(p_rf24, NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
+}
+
+void rf24_start_listening(rf24_t* p_rf24) {
+    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(p_rf24, NRF24L01_REG_CONFIG) };
+    nrf24l01_reg_status_t reg_status;
+
+    reg_config.value |= _BS(PRIM_RX);
+    reg_status.value = ( _BS(RX_DR) | _BS(TX_DS) | _BS(MAX_RT) );
+
+    rf24_write_reg8(p_rf24, NRF24L01_REG_CONFIG, reg_config.value);
+    rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, reg_status.value);
+
+    //rf24_enable estava aqui, coloquei pro final da função
+
+    if (p_rf24->pipe0_reading_address[0] > 0) {
+        rf24_write_register(p_rf24, NRF24L01_REG_RX_ADDR_P0, p_rf24->pipe0_reading_address, p_rf24->addr_width);
+    } else {
+        rf24_close_reading_pipe(p_rf24, 0);
+    }
+
+    // Flush buffers
+    rf24_flush_rx(p_rf24);
+    nrf24l01_reg_feature_t reg_feature = { rf24_read_reg8(p_rf24, NRF24L01_REG_FEATURE) };
+    if (reg_feature.en_ack_pay) {
+        rf24_flush_tx(p_rf24);
+    }
+
+    rf24_enable(p_rf24); // isso deveria ser no final da função?
+}
+
+void rf24_stop_listening(rf24_t* p_rf24) {
+    rf24_disable(p_rf24);
+
+    HAL_Delay(txDelay);
+
+    rf24_flush_rx(p_rf24);
+    nrf24l01_reg_feature_t reg_feature = { rf24_read_reg8(p_rf24, NRF24L01_REG_FEATURE) };
+    if (reg_feature.en_ack_pay) {
+        HAL_Delay(txDelay); //200
+        rf24_flush_tx(p_rf24);
+    }
+
+    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(p_rf24, NRF24L01_REG_CONFIG) };
+    reg_config.value &= (~_BS(PRIM_RX));
+    rf24_write_reg8(p_rf24, NRF24L01_REG_CONFIG, reg_config.value);
+
+    nrf24l01_reg_en_rxaddr_t reg_en_rx_addr = { rf24_read_reg8(p_rf24, NRF24L01_REG_EN_RXADDR) };
+    reg_en_rx_addr.value |= _BS(child_pipe_enable[0]);
+    rf24_write_reg8(p_rf24, NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
+}
 
 // read/write register functions
 nrf24l01_reg_status_t rf24_send_command(rf24_t* rf24, nrf24l01_spi_commands_t command) {

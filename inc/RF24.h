@@ -8,11 +8,20 @@
 #include "gpio.h"
 #include "spi.h"
 
+#define _BS(bit) (1<<(bit))
+
 typedef enum {
     RF24_1MBPS = 0,
     RF24_2MBPS,
     RF24_250KBPS,
 } rf24_datarate_t;
+
+typedef enum {
+    RF24_18_dBm = 0,
+    RF24_12_dBm,
+    RF24_6_dBm,
+    RF24_0_dBm,
+} rf24_output_power_t;
 
 typedef struct __attribute__((packed)) rf24 {
     GPIO_TypeDef* csn_port;
@@ -31,7 +40,23 @@ typedef struct __attribute__((packed)) rf24 {
     uint8_t addr_width;
     rf24_datarate_t datarate;
     uint8_t channel;
+
+    uint8_t pipe0_reading_address[5]; /**< Last address set on pipe 0 for reading. */
 } rf24_t;
+
+/**
+  *
+  * The driver will delay for this duration when stopListening() is called
+  *
+  * When responding to payloads, faster devices like ARM(RPi) are much faster than Arduino:
+  * 1. Arduino sends data to RPi, switches to RX mode
+  * 2. The RPi receives the data, switches to TX mode and sends before the Arduino radio is in RX mode
+  * 3. If AutoACK is disabled, this can be set as low as 0. If AA/ESB enabled, set to 100uS minimum on RPi
+  *
+  * @warning If set to 0, ensure 130uS delay after stopListening() and before any sends
+  */
+uint32_t txDelay;
+
 
 rf24_t rf24_get_default_config(void);
 
@@ -49,14 +74,25 @@ void rf24_set_channel(rf24_t* rf24, uint8_t ch);
 
 uint8_t rf24_get_channel(rf24_t* rf24);
 
-
 void rf24_set_retries(rf24_t* rf24, uint8_t delay, uint8_t count);
 
 bool rf24_set_datarate(rf24_t* rf24, rf24_datarate_t datarate);
 
+bool rf24_set_output_power(rf24_t* rf24, rf24_output_power_t output_power);
+
 void rf24_flush_rx(rf24_t* rf24);
 
 void rf24_flush_tx(rf24_t* rf24);
+
+void rf24_open_writing_pipe(rf24_t* p_rf24, uint8_t* address);
+
+void rf24_open_reading_pipe(rf24_t* p_rf24, uint8_t pipe_number, uint8_t* address);
+
+void rf24_close_reading_pipe(rf24_t* p_rf24, uint8_t pipe_number);
+
+void rf24_start_listening(rf24_t* p_rf24);
+
+void rf24_stop_listening(rf24_t* p_rf24);
 
 void rf24_read_all_registers(rf24_t* rf24); // not uplemented (do we need?)
 
