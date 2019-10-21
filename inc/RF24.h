@@ -114,13 +114,17 @@ void rf24_end_transaction(rf24_t* rf24);
 // read/write register functions (private?)
 nrf24l01_reg_status_t rf24_send_command(rf24_t* rf24, nrf24l01_spi_commands_t command);
 
-nrf24l01_reg_status_t rf24_read_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buf, uint8_t len);
+nrf24l01_reg_status_t rf24_read_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buff, uint8_t len);
 
 uint8_t rf24_read_reg8(rf24_t* rf24, nrf24l01_registers_t reg);
 
-nrf24l01_reg_status_t rf24_write_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buf, uint8_t len);
+nrf24l01_reg_status_t rf24_write_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buff, uint8_t len);
 
 void rf24_write_reg8(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t value);
+
+nrf24l01_reg_status_t rf24_read_payload(rf24_t* p_rf24, uint8_t* buff, uint8_t len);
+
+nrf24l01_reg_status_t rf24_write_payload(rf24_t* p_rf24, uint8_t* buff, uint8_t len, bool enable_auto_ack);
 
 
 #ifdef DEBUG

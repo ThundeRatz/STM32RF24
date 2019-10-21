@@ -301,7 +301,7 @@ nrf24l01_reg_status_t rf24_send_command(rf24_t* rf24, nrf24l01_spi_commands_t co
     return status;
 }
 
-nrf24l01_reg_status_t rf24_read_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buf, uint8_t len) {
+nrf24l01_reg_status_t rf24_read_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buff, uint8_t len) {
     nrf24l01_reg_status_t status;
 
     rf24_begin_transaction(rf24);
@@ -310,7 +310,7 @@ nrf24l01_reg_status_t rf24_read_register(rf24_t* rf24, nrf24l01_registers_t reg,
     uint8_t command = NRF24L01_COMM_R_REGISTER | (NRF24L01_COMM_RW_REGISTER_MASK & reg);
     HAL_SPI_TransmitReceive(rf24->hspi, &command, &(status.value), 1, rf24->spi_timeout);
 
-    HAL_SPI_Receive(rf24->hspi, buf, len, rf24->spi_timeout);
+    HAL_SPI_Receive(rf24->hspi, buff, len, rf24->spi_timeout);
 
     rf24_end_transaction(rf24);
 
@@ -324,7 +324,7 @@ uint8_t rf24_read_reg8(rf24_t* rf24, nrf24l01_registers_t reg) {
     return val;
 }
 
-nrf24l01_reg_status_t rf24_write_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buf, uint8_t len) {
+nrf24l01_reg_status_t rf24_write_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buff, uint8_t len) {
     nrf24l01_reg_status_t status;
 
     rf24_begin_transaction(rf24);
@@ -332,7 +332,7 @@ nrf24l01_reg_status_t rf24_write_register(rf24_t* rf24, nrf24l01_registers_t reg
     uint8_t command = NRF24L01_COMM_W_REGISTER | (NRF24L01_COMM_RW_REGISTER_MASK & reg);
     HAL_SPI_TransmitReceive(rf24->hspi, &command, &(status.value), 1, rf24->spi_timeout);
 
-    HAL_SPI_Transmit(rf24->hspi, buf, len, rf24->spi_timeout);
+    HAL_SPI_Transmit(rf24->hspi, buff, len, rf24->spi_timeout);
 
     rf24_end_transaction(rf24);
 
@@ -341,6 +341,36 @@ nrf24l01_reg_status_t rf24_write_register(rf24_t* rf24, nrf24l01_registers_t reg
 
 void rf24_write_reg8(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t value) {
     rf24_write_register(rf24, reg, &value, 1);
+}
+
+nrf24l01_reg_status_t rf24_read_payload(rf24_t* p_rf24, uint8_t* buff, uint8_t len) {
+    nrf24l01_reg_status_t status;
+
+    rf24_begin_transaction(p_rf24);
+
+    uint8_t command = NRF24L01_COMM_R_RX_PAYLOAD;
+    HAL_SPI_TransmitReceive(p_rf24->hspi, &command, &(status.value), 1, p_rf24->spi_timeout);
+
+    HAL_SPI_Receive(p_rf24->hspi, buff, len, p_rf24->spi_timeout);
+
+    rf24_end_transaction(p_rf24);
+
+    return status;
+}
+
+nrf24l01_reg_status_t rf24_write_payload(rf24_t* p_rf24, uint8_t* buff, uint8_t len, bool enable_auto_ack) {
+    nrf24l01_reg_status_t status;
+
+    rf24_begin_transaction(p_rf24);
+
+    uint8_t command = enable_auto_ack ? NRF24L01_COMM_W_TX_PAYLOAD : NRF24L01_COMM_W_TX_PAYLOAD_NOACK;
+    HAL_SPI_TransmitReceive(p_rf24->hspi, &command, &(status.value), 1, p_rf24->spi_timeout);
+
+    HAL_SPI_Transmit(p_rf24->hspi, buff, len, p_rf24->spi_timeout);
+
+    rf24_end_transaction(p_rf24);
+
+    return status;
 }
 
 #ifdef DEBUG
