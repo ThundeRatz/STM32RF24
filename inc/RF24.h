@@ -94,6 +94,14 @@ void rf24_start_listening(rf24_t* p_rf24);
 
 void rf24_stop_listening(rf24_t* p_rf24);
 
+
+// Read/Write FIFO functions
+
+nrf24l01_reg_status_t rf24_get_status(rf24_t* p_rf24);
+
+bool rf24_available(rf24_t* p_rf24, uint8_t* pipe_number);  // Se não quiser ler o pipe, só mandar NULL
+
+
 void rf24_read_all_registers(rf24_t* rf24); // not uplemented (do we need?)
 
 

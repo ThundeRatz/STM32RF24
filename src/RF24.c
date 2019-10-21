@@ -170,14 +170,6 @@ void rf24_flush_tx(rf24_t* rf24) {
     rf24_send_command(rf24, NRF24L01_COMM_FLUSH_TX);
 }
 
-void rf24_begin_transaction(rf24_t* rf24) {
-    HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_RESET);
-}
-
-void rf24_end_transaction(rf24_t* rf24) {
-    HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_SET);
-}
-
 
 void rf24_open_writing_pipe(rf24_t* p_rf24, uint8_t* address) {
     rf24_write_register(p_rf24, NRF24L01_REG_RX_ADDR_P0, address, p_rf24->addr_width);
@@ -273,7 +265,32 @@ void rf24_stop_listening(rf24_t* p_rf24) {
     rf24_write_reg8(p_rf24, NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
 }
 
+nrf24l01_reg_status_t rf24_get_status(rf24_t* p_rf24) {
+    return (rf24_send_command(p_rf24, NRF24L01_COMM_NOP));
+}
+
+bool rf24_available(rf24_t* p_rf24, uint8_t* pipe_number) {
+    nrf24l01_reg_fifo_status_t reg_fifo_status = { rf24_read_reg8(p_rf24, NRF24L01_REG_FIFO_STATUS) };
+    if (!reg_fifo_status.rx_empty) {
+        if (pipe_number) {
+            nrf24l01_reg_status_t reg_status = rf24_get_status(p_rf24);
+            (*pipe_number) = (uint8_t) reg_status.rx_p_no;
+        }
+        return true;
+    }
+    return false;
+}
+
 // read/write register functions
+
+void rf24_begin_transaction(rf24_t* rf24) {
+    HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_RESET);
+}
+
+void rf24_end_transaction(rf24_t* rf24) {
+    HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_SET);
+}
+
 nrf24l01_reg_status_t rf24_send_command(rf24_t* rf24, nrf24l01_spi_commands_t command) {
     nrf24l01_reg_status_t status;
 
