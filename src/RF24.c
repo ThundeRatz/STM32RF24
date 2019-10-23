@@ -281,6 +281,45 @@ bool rf24_available(rf24_t* p_rf24, uint8_t* pipe_number) {
     return false;
 }
 
+bool rf24_read(rf24_t* p_rf24, uint8_t* buff, uint8_t len) {
+    nrf24l01_reg_status_t status = rf24_read_payload(p_rf24, buff, len);
+
+    //  Limpando a interrupt de data ready, porém não usamos ela em nenhum lugar ainda
+    status.rx_dr = 1;
+    rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status.value);
+
+    return true;
+}
+
+bool rf24_write(rf24_t* p_rf24, uint8_t* buff, uint8_t len, bool enable_auto_ack) {
+    nrf24l01_reg_status_t status = rf24_get_status(p_rf24);
+    if (status.tx_full) {
+        return false;
+    }
+    status = rf24_write_payload(p_rf24, buff, len, enable_auto_ack);
+
+    rf24_enable(p_rf24);
+
+    do {
+        status = rf24_get_status(p_rf24);
+    } while (!status.tx_ds && !status.max_rt);
+
+    rf24_disable(p_rf24);
+
+    //Max retries exceeded
+    if (status.max_rt) {
+        status.max_rt = 1;  // O datasheet manda escerever 1 no bit para limpar a interrupcao (muito estranho esse codigo aqui)
+        rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status.value);
+        rf24_flush_tx(p_rf24); //Only going to be 1 packet int the FIFO at a time using this method, so just flush
+        return false;
+    }
+
+    status.tx_ds = 1;
+    rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status.value);
+
+    return true;
+}
+
 // read/write register functions
 
 void rf24_begin_transaction(rf24_t* rf24) {
@@ -472,7 +511,7 @@ void rf24_dump_registers(rf24_t* rf24) {
 }
 
 void rf24_print_status(rf24_t* rf24) {
-    nrf24l01_reg_status_t reg_status = { rf24_read_reg8(rf24, NRF24L01_REG_STATUS) };
+    nrf24l01_reg_status_t reg_status = rf24_get_status(rf24);
 
     PRINTF("[07] STATUS      = 0x%02X | RX_DR=%d  TX_DS=%d  MAX_RT=%d  RX_P_NO=%d  TX_FULL=%d\r\n", reg_status.value,
            reg_status.rx_dr, reg_status.tx_ds, reg_status.max_rt, reg_status.rx_p_no,

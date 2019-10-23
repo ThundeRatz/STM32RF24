@@ -101,6 +101,10 @@ nrf24l01_reg_status_t rf24_get_status(rf24_t* p_rf24);
 
 bool rf24_available(rf24_t* p_rf24, uint8_t* pipe_number);  // Se não quiser ler o pipe, só mandar NULL
 
+bool rf24_read(rf24_t* p_rf24, uint8_t* buff, uint8_t len);
+
+bool rf24_write(rf24_t* p_rf24, uint8_t* buff, uint8_t len, bool enable_auto_ack);
+
 
 void rf24_read_all_registers(rf24_t* rf24); // not uplemented (do we need?)
 
