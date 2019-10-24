@@ -10,13 +10,13 @@
 
 #define _BS(bit) (1<<(bit))
 
-typedef enum {
+typedef enum rf24_datarate {
     RF24_1MBPS = 0,
     RF24_2MBPS,
     RF24_250KBPS,
 } rf24_datarate_t;
 
-typedef enum {
+typedef enum rf24_output_power {
     RF24_18_dBm = 0,
     RF24_12_dBm,
     RF24_6_dBm,
