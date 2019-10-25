@@ -41,6 +41,7 @@ bool rf24_init(rf24_t* rf24) {
 
     nrf24l01_reg_feature_t reg_feature = {0x00};
     nrf24l01_reg_dynpd_t reg_dynpd = {0x00};
+    reg_feature.en_dyn_ack = 1;
     rf24_write_reg8(rf24, NRF24L01_REG_FEATURE, reg_feature.value);
     rf24_write_reg8(rf24, NRF24L01_REG_DYNPD, reg_dynpd.value);
 
