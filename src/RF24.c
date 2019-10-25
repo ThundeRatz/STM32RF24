@@ -151,7 +151,7 @@ bool rf24_set_datarate(rf24_t* rf24, rf24_datarate_t datarate) {
 
 bool rf24_set_output_power(rf24_t* rf24, rf24_output_power_t output_power) {
     nrf24l01_reg_rf_setup_t reg_rf_setup = { rf24_read_reg8(rf24, NRF24L01_REG_RF_SETUP) };
-    reg_rf_setup.rf_pwr = output_power;
+    reg_rf_setup.rf_pwr = (uint8_t) output_power;
     rf24_write_reg8(rf24, NRF24L01_REG_RF_SETUP, reg_rf_setup.value);
 
     uint8_t temp_reg;
@@ -403,7 +403,8 @@ nrf24l01_reg_status_t rf24_write_payload(rf24_t* p_rf24, uint8_t* buff, uint8_t 
 
     rf24_begin_transaction(p_rf24);
 
-    uint8_t command = enable_auto_ack ? NRF24L01_COMM_W_TX_PAYLOAD : NRF24L01_COMM_W_TX_PAYLOAD_NOACK;
+    uint8_t command = enable_auto_ack ? (NRF24L01_COMM_W_TX_PAYLOAD) : (NRF24L01_COMM_W_TX_PAYLOAD_NOACK);
+
     HAL_SPI_TransmitReceive(p_rf24->hspi, &command, &(status.value), 1, p_rf24->spi_timeout);
 
     HAL_SPI_Transmit(p_rf24->hspi, buff, len, p_rf24->spi_timeout);
