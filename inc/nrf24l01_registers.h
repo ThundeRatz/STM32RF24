@@ -1,4 +1,16 @@
-// https://www.sparkfun.com/datasheets/Components/SMD/nRF24L01Pluss_Preliminary_Product_Specification_v1_0.pdf
+/**
+ * @file nrf24l01_registers.h
+ *
+ * @brief nRF24L01 registers related.
+ *
+ * @author Daniel Nery <daniel.nery@thunderatz.org>
+ * @author Lucas Haug <lucas.haug@thunderatz.org>
+ * @author Lucas Schneider <lucas.schneider@thunderatz.org>
+ *
+ * @see docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf
+ *
+ * @date 10/2019
+ */
 
 #include <stdint.h>
 
