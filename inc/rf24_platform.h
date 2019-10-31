@@ -120,7 +120,7 @@ rf24_platform_status_t rf24_platform_get_status(rf24_t *rf24, nrf24l01_reg_statu
  * @param p_rf24    Pointer to rf24 instance
  * @param reg       Register to be read
  * @param buff      Buffer to store register value
- * @param lenBuffer lenght
+ * @param len       Buffer lenght
  *
  * @return @ref rf24_platform_status.
  */
@@ -179,7 +179,9 @@ rf24_platform_status_t rf24_read_payload(rf24_t* p_rf24, uint8_t* buff, uint8_t 
  * @param len               Payload lenght
  * @param enable_auto_ack   Tells the receiver if a acknowledgement packet is expected
  *
- * @note To use the enable_auto_ack feature, the user must set the EN_DYN_ACK bit from the FEATURE register. This will allow to control which payload requires acknowledgement dynamically.
+ * @note To use the enable_auto_ack feature, the user must set the EN_DYN_ACK bit
+ *       from the FEATURE register. This will allow to control which payload
+ *       requires acknowledgement dynamically.
  *
  * @return @ref rf24_platform_status.
  */
