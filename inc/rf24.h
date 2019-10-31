@@ -30,6 +30,23 @@ typedef enum rf24_output_power {
     RF24_0_dBm,
 } rf24_output_power_t;
 
+typedef enum rf24_datarate {
+    RF24_1MBPS = 0,
+    RF24_2MBPS,
+    RF24_250KBPS,
+} rf24_datarate_t;
+
+typedef struct rf24_dev {
+    rf24_platform_t     platform_setup;
+
+    uint8_t             payload_size;
+    uint8_t             addr_width;
+    rf24_datarate_t     datarate;
+    uint8_t             channel;
+
+    uint8_t             pipe0_reading_address[5]; /**< Last address set on pipe 0 for reading. */
+} rf24_dev_t;
+
 /**
  *
  * The driver will delay for this duration when stopListening() is called
@@ -43,49 +60,49 @@ typedef enum rf24_output_power {
  */
 uint32_t txDelay;
 
-rf24_t rf24_get_default_config(void);
+rf24_dev_t rf24_get_default_config(void);
 
-bool rf24_init(rf24_t* rf24);
+bool rf24_init(rf24_dev_t* p_dev);
 
-void rf24_power_up(rf24_t* rf24);
+void rf24_power_up(rf24_dev_t* p_dev);
 
-void rf24_power_down(rf24_t* rf24);
+void rf24_power_down(rf24_dev_t* p_dev);
 
-void rf24_set_channel(rf24_t* rf24, uint8_t ch);
+void rf24_set_channel(rf24_dev_t* p_dev, uint8_t ch);
 
-uint8_t rf24_get_channel(rf24_t* rf24);
+uint8_t rf24_get_channel(rf24_dev_t* p_dev);
 
-void rf24_set_retries(rf24_t* rf24, uint8_t delay, uint8_t count);
+void rf24_set_retries(rf24_dev_t* p_dev, uint8_t delay, uint8_t count);
 
-bool rf24_set_datarate(rf24_t* rf24, rf24_datarate_t datarate);
+bool rf24_set_datarate(rf24_dev_t* p_dev, rf24_datarate_t datarate);
 
-bool rf24_set_output_power(rf24_t* rf24, rf24_output_power_t output_power);
+bool rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t output_power);
 
-void rf24_flush_rx(rf24_t* rf24);
+void rf24_flush_rx(rf24_dev_t* p_dev);
 
-void rf24_flush_tx(rf24_t* rf24);
+void rf24_flush_tx(rf24_dev_t* p_dev);
 
-void rf24_open_writing_pipe(rf24_t* p_rf24, uint8_t* address);
+void rf24_open_writing_pipe(rf24_dev_t* p_dev, uint8_t* address);
 
-void rf24_open_reading_pipe(rf24_t* p_rf24, uint8_t pipe_number, uint8_t* address);
+void rf24_open_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number, uint8_t* address);
 
-void rf24_close_reading_pipe(rf24_t* p_rf24, uint8_t pipe_number);
+void rf24_close_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number);
 
-void rf24_start_listening(rf24_t* p_rf24);
+void rf24_start_listening(rf24_dev_t* p_dev);
 
-void rf24_stop_listening(rf24_t* p_rf24);
+void rf24_stop_listening(rf24_dev_t* p_dev);
 
 // Read/Write FIFO functions
 
-nrf24l01_reg_status_t rf24_get_status(rf24_t* p_rf24);
+nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev);
 
-bool rf24_available(rf24_t* p_rf24, uint8_t* pipe_number); // Se não quiser ler o pipe, só mandar NULL
+bool rf24_available(rf24_dev_t* p_dev, uint8_t* pipe_number); // Se não quiser ler o pipe, só mandar NULL
 
-bool rf24_read(rf24_t* p_rf24, uint8_t* buff, uint8_t len);
+bool rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len);
 
-bool rf24_write(rf24_t* p_rf24, uint8_t* buff, uint8_t len, bool enable_auto_ack);
+bool rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool enable_auto_ack);
 
-void rf24_read_all_registers(rf24_t* rf24); // not uplemented (do we need?)
+void rf24_read_all_registers(rf24_dev_t* p_dev); // not uplemented (do we need?)
 
 // private?
 
@@ -94,9 +111,9 @@ void rf24_read_all_registers(rf24_t* rf24); // not uplemented (do we need?)
 
 
 #ifdef DEBUG
-void rf24_dump_registers(rf24_t* rf24);
+void rf24_dump_registers(rf24_dev_t* p_dev);
 
-void rf24_print_status(rf24_t* rf24);
+void rf24_print_status(rf24_dev_t* p_dev);
 
 #endif
 
