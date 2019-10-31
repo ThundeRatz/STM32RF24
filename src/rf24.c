@@ -1,4 +1,17 @@
-#include "RF24.h"
+/**
+ * @file rf24.c
+ *
+ * @brief nRF24L01 registers related.
+ *
+ * @author Lucas Schneider <lucas.schneider@thunderatz.org>
+ * @author Lucas Haug <lucas.haug@thunderatz.org>
+ * @author Daniel Nery <daniel.nery@thunderatz.org>
+ *
+ * @date 10/2019
+ */
+
+#include "rf24.h"
+#include "rf24_platform.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -52,16 +65,17 @@ bool rf24_init(rf24_t* rf24) {
 
     rf24_power_up(rf24);
 
-    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(rf24, NRF24L01_REG_CONFIG) };
+    nrf24l01_reg_config_t reg_config = {rf24_read_reg8(rf24, NRF24L01_REG_CONFIG)};
     reg_config.prim_rx = 0;
     rf24_write_reg8(rf24, NRF24L01_REG_CONFIG, reg_config.value);
+
     // rf24_enable(rf24); Vou fazer no start listening
 
     return ((setup != 0) && (setup != 0xff));
 }
 
 void rf24_power_up(rf24_t* rf24) {
-    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(rf24, NRF24L01_REG_CONFIG) };
+    nrf24l01_reg_config_t reg_config = {rf24_read_reg8(rf24, NRF24L01_REG_CONFIG)};
 
     if (reg_config.pwr_up == 1) {
         return;
@@ -73,7 +87,7 @@ void rf24_power_up(rf24_t* rf24) {
 }
 
 void rf24_power_down(rf24_t* rf24) {
-    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(rf24, NRF24L01_REG_CONFIG) };
+    nrf24l01_reg_config_t reg_config = {rf24_read_reg8(rf24, NRF24L01_REG_CONFIG)};
 
     if (reg_config.pwr_up == 0) {
         return;
@@ -113,7 +127,7 @@ void rf24_set_retries(rf24_t* rf24, uint8_t delay, uint8_t count) {
 
 bool rf24_set_datarate(rf24_t* rf24, rf24_datarate_t datarate) {
     rf24->datarate = datarate;
-    nrf24l01_reg_rf_setup_t reg_rf_setup = { rf24_read_reg8(rf24, NRF24L01_REG_RF_SETUP) };
+    nrf24l01_reg_rf_setup_t reg_rf_setup = {rf24_read_reg8(rf24, NRF24L01_REG_RF_SETUP)};
 
     // TODO Coisas com txDelay (??)
 
@@ -145,7 +159,7 @@ bool rf24_set_datarate(rf24_t* rf24, rf24_datarate_t datarate) {
         return true;
     }
 
-    reg_rf_setup.value = temp_reg;  // Pra que isso se não faz nada dps?
+    reg_rf_setup.value = temp_reg; // Pra que isso se não faz nada dps?
     return false;
 }
 
@@ -171,11 +185,10 @@ void rf24_flush_tx(rf24_t* rf24) {
     rf24_send_command(rf24, NRF24L01_COMM_FLUSH_TX);
 }
 
-
 void rf24_open_writing_pipe(rf24_t* p_rf24, uint8_t* address) {
     rf24_write_register(p_rf24, NRF24L01_REG_RX_ADDR_P0, address, p_rf24->addr_width);
     rf24_write_register(p_rf24, NRF24L01_REG_TX_ADDR, address, p_rf24->addr_width);
-    rf24_write_reg8(p_rf24,NRF24L01_REG_RX_PW_P0, p_rf24->payload_size);
+    rf24_write_reg8(p_rf24, NRF24L01_REG_RX_PW_P0, p_rf24->payload_size);
 }
 
 static const uint8_t child_pipe[] = {RX_ADDR_P0, RX_ADDR_P1, RX_ADDR_P2, RX_ADDR_P3, RX_ADDR_P4, RX_ADDR_P5};
@@ -206,28 +219,28 @@ void rf24_open_reading_pipe(rf24_t* p_rf24, uint8_t pipe_number, uint8_t* addres
     // Note it would be more efficient to set all of the bits for all open
     // pipes at once.  However, I thought it would make the calling code
     // more simple to do it this way.
-    nrf24l01_reg_en_rxaddr_t reg_en_rx_addr = { rf24_read_reg8(p_rf24, NRF24L01_REG_EN_RXADDR) };
+    nrf24l01_reg_en_rxaddr_t reg_en_rx_addr = {rf24_read_reg8(p_rf24, NRF24L01_REG_EN_RXADDR)};
     reg_en_rx_addr.value |= _BS(child_pipe_enable[pipe_number]);
     rf24_write_reg8(p_rf24, NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
 }
 
 void rf24_close_reading_pipe(rf24_t* p_rf24, uint8_t pipe_number) {
-    nrf24l01_reg_en_rxaddr_t reg_en_rx_addr = { rf24_read_reg8(p_rf24, NRF24L01_REG_EN_RXADDR) };
+    nrf24l01_reg_en_rxaddr_t reg_en_rx_addr = {rf24_read_reg8(p_rf24, NRF24L01_REG_EN_RXADDR)};
     reg_en_rx_addr.value &= (~_BS(child_pipe_enable[pipe_number]));
     rf24_write_reg8(p_rf24, NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
 }
 
 void rf24_start_listening(rf24_t* p_rf24) {
-    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(p_rf24, NRF24L01_REG_CONFIG) };
+    nrf24l01_reg_config_t reg_config = {rf24_read_reg8(p_rf24, NRF24L01_REG_CONFIG)};
     nrf24l01_reg_status_t reg_status;
 
     reg_config.value |= _BS(PRIM_RX);
-    reg_status.value = ( _BS(RX_DR) | _BS(TX_DS) | _BS(MAX_RT) );
+    reg_status.value = (_BS(RX_DR) | _BS(TX_DS) | _BS(MAX_RT));
 
     rf24_write_reg8(p_rf24, NRF24L01_REG_CONFIG, reg_config.value);
     rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, reg_status.value);
 
-    //rf24_enable estava aqui, coloquei pro final da função
+    // rf24_enable estava aqui, coloquei pro final da função
 
     if (p_rf24->pipe0_reading_address[0] > 0) {
         rf24_write_register(p_rf24, NRF24L01_REG_RX_ADDR_P0, p_rf24->pipe0_reading_address, p_rf24->addr_width);
@@ -237,7 +250,8 @@ void rf24_start_listening(rf24_t* p_rf24) {
 
     // Flush buffers
     rf24_flush_rx(p_rf24);
-    nrf24l01_reg_feature_t reg_feature = { rf24_read_reg8(p_rf24, NRF24L01_REG_FEATURE) };
+    nrf24l01_reg_feature_t reg_feature = {rf24_read_reg8(p_rf24, NRF24L01_REG_FEATURE)};
+
     if (reg_feature.en_ack_pay) {
         rf24_flush_tx(p_rf24);
     }
@@ -251,17 +265,18 @@ void rf24_stop_listening(rf24_t* p_rf24) {
     HAL_Delay(txDelay);
 
     rf24_flush_rx(p_rf24);
-    nrf24l01_reg_feature_t reg_feature = { rf24_read_reg8(p_rf24, NRF24L01_REG_FEATURE) };
+    nrf24l01_reg_feature_t reg_feature = {rf24_read_reg8(p_rf24, NRF24L01_REG_FEATURE)};
+
     if (reg_feature.en_ack_pay) {
-        HAL_Delay(txDelay); //200
+        HAL_Delay(txDelay); // 200
         rf24_flush_tx(p_rf24);
     }
 
-    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(p_rf24, NRF24L01_REG_CONFIG) };
+    nrf24l01_reg_config_t reg_config = {rf24_read_reg8(p_rf24, NRF24L01_REG_CONFIG)};
     reg_config.value &= (~_BS(PRIM_RX));
     rf24_write_reg8(p_rf24, NRF24L01_REG_CONFIG, reg_config.value);
 
-    nrf24l01_reg_en_rxaddr_t reg_en_rx_addr = { rf24_read_reg8(p_rf24, NRF24L01_REG_EN_RXADDR) };
+    nrf24l01_reg_en_rxaddr_t reg_en_rx_addr = {rf24_read_reg8(p_rf24, NRF24L01_REG_EN_RXADDR)};
     reg_en_rx_addr.value |= _BS(child_pipe_enable[0]);
     rf24_write_reg8(p_rf24, NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
 }
@@ -271,21 +286,24 @@ nrf24l01_reg_status_t rf24_get_status(rf24_t* p_rf24) {
 }
 
 bool rf24_available(rf24_t* p_rf24, uint8_t* pipe_number) {
-    nrf24l01_reg_fifo_status_t reg_fifo_status = { rf24_read_reg8(p_rf24, NRF24L01_REG_FIFO_STATUS) };
+    nrf24l01_reg_fifo_status_t reg_fifo_status = {rf24_read_reg8(p_rf24, NRF24L01_REG_FIFO_STATUS)};
+
     if (!reg_fifo_status.rx_empty) {
         if (pipe_number) {
             nrf24l01_reg_status_t reg_status = rf24_get_status(p_rf24);
             (*pipe_number) = (uint8_t) reg_status.rx_p_no;
         }
+
         return true;
     }
+
     return false;
 }
 
 bool rf24_read(rf24_t* p_rf24, uint8_t* buff, uint8_t len) {
     nrf24l01_reg_status_t status = rf24_read_payload(p_rf24, buff, len);
 
-    //  Limpando a interrupt de data ready, porém não usamos ela em nenhum lugar ainda
+    // Limpando a interrupt de data ready, porém não usamos ela em nenhum lugar ainda
     status.rx_dr = 1;
     rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status.value);
 
@@ -294,9 +312,11 @@ bool rf24_read(rf24_t* p_rf24, uint8_t* buff, uint8_t len) {
 
 bool rf24_write(rf24_t* p_rf24, uint8_t* buff, uint8_t len, bool enable_auto_ack) {
     nrf24l01_reg_status_t status = rf24_get_status(p_rf24);
+
     if (status.tx_full) {
         return false;
     }
+
     status = rf24_write_payload(p_rf24, buff, len, enable_auto_ack);
 
     rf24_enable(p_rf24);
@@ -307,11 +327,11 @@ bool rf24_write(rf24_t* p_rf24, uint8_t* buff, uint8_t len, bool enable_auto_ack
 
     rf24_disable(p_rf24);
 
-    //Max retries exceeded
+    // Max retries exceeded
     if (status.max_rt) {
-        status.max_rt = 1;  // O datasheet manda escerever 1 no bit para limpar a interrupcao (muito estranho esse codigo aqui)
+        status.max_rt = 1; // O datasheet manda escerever 1 no bit para limpar a interrupcao (muito estranho esse codigo aqui)
         rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status.value);
-        rf24_flush_tx(p_rf24); //Only going to be 1 packet int the FIFO at a time using this method, so just flush
+        rf24_flush_tx(p_rf24); // Only going to be 1 packet int the FIFO at a time using this method, so just flush
         return false;
     }
 
@@ -416,16 +436,16 @@ nrf24l01_reg_status_t rf24_write_payload(rf24_t* p_rf24, uint8_t* buff, uint8_t 
 
 #ifdef DEBUG
 void rf24_dump_registers(rf24_t* rf24) {
-    nrf24l01_reg_config_t reg_config = { rf24_read_reg8(rf24, NRF24L01_REG_CONFIG) };
-    nrf24l01_reg_en_aa_t reg_en_aa   = { rf24_read_reg8(rf24, NRF24L01_REG_EN_AA) };
-    nrf24l01_reg_en_rxaddr_t reg_en_rxaddr = { rf24_read_reg8(rf24, NRF24L01_REG_EN_RXADDR) };
-    nrf24l01_reg_setup_aw_t reg_setup_aw = { rf24_read_reg8(rf24, NRF24L01_REG_SETUP_AW) };
-    nrf24l01_reg_setup_retr_t reg_setup_retr = { rf24_read_reg8(rf24, NRF24L01_REG_SETUP_RETR) };
-    nrf24l01_reg_rf_ch_t reg_rf_ch = { rf24_read_reg8(rf24, NRF24L01_REG_RF_CH) };
-    nrf24l01_reg_rf_setup_t reg_rf_setup = { rf24_read_reg8(rf24, NRF24L01_REG_RF_SETUP) };
-    nrf24l01_reg_status_t reg_status = { rf24_read_reg8(rf24, NRF24L01_REG_STATUS) };
-    nrf24l01_reg_observe_tx_t reg_observe_tx = { rf24_read_reg8(rf24, NRF24L01_REG_OBSERVE_TX) };
-    nrf24l01_reg_rpd_t reg_rpd = { rf24_read_reg8(rf24, NRF24L01_REG_RPD) };
+    nrf24l01_reg_config_t reg_config = {rf24_read_reg8(rf24, NRF24L01_REG_CONFIG)};
+    nrf24l01_reg_en_aa_t reg_en_aa = {rf24_read_reg8(rf24, NRF24L01_REG_EN_AA)};
+    nrf24l01_reg_en_rxaddr_t reg_en_rxaddr = {rf24_read_reg8(rf24, NRF24L01_REG_EN_RXADDR)};
+    nrf24l01_reg_setup_aw_t reg_setup_aw = {rf24_read_reg8(rf24, NRF24L01_REG_SETUP_AW)};
+    nrf24l01_reg_setup_retr_t reg_setup_retr = {rf24_read_reg8(rf24, NRF24L01_REG_SETUP_RETR)};
+    nrf24l01_reg_rf_ch_t reg_rf_ch = {rf24_read_reg8(rf24, NRF24L01_REG_RF_CH)};
+    nrf24l01_reg_rf_setup_t reg_rf_setup = {rf24_read_reg8(rf24, NRF24L01_REG_RF_SETUP)};
+    nrf24l01_reg_status_t reg_status = {rf24_read_reg8(rf24, NRF24L01_REG_STATUS)};
+    nrf24l01_reg_observe_tx_t reg_observe_tx = {rf24_read_reg8(rf24, NRF24L01_REG_OBSERVE_TX)};
+    nrf24l01_reg_rpd_t reg_rpd = {rf24_read_reg8(rf24, NRF24L01_REG_RPD)};
 
     nrf24l01_reg_5byte_addr_t reg_rx_addr_p0;
     nrf24l01_reg_5byte_addr_t reg_rx_addr_p1;
@@ -434,19 +454,19 @@ void rf24_dump_registers(rf24_t* rf24) {
     rf24_read_register(rf24, NRF24L01_REG_RX_ADDR_P1, reg_rx_addr_p1.value, rf24->addr_width);
     rf24_read_register(rf24, NRF24L01_REG_TX_ADDR, reg_tx_addr.value, rf24->addr_width);
 
-    nrf24l01_reg_1byte_addr_t reg_rx_addr_p2 = { rf24_read_reg8(rf24, NRF24L01_REG_RX_ADDR_P2) };
-    nrf24l01_reg_1byte_addr_t reg_rx_addr_p3 = { rf24_read_reg8(rf24, NRF24L01_REG_RX_ADDR_P3) };
-    nrf24l01_reg_1byte_addr_t reg_rx_addr_p4 = { rf24_read_reg8(rf24, NRF24L01_REG_RX_ADDR_P4) };
-    nrf24l01_reg_1byte_addr_t reg_rx_addr_p5 = { rf24_read_reg8(rf24, NRF24L01_REG_RX_ADDR_P5) };
-    nrf24l01_reg_rx_pw_p0_t reg_rx_pw_p0 = { rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P0) };
-    nrf24l01_reg_rx_pw_p1_t reg_rx_pw_p1 = { rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P1) };
-    nrf24l01_reg_rx_pw_p2_t reg_rx_pw_p2 = { rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P2) };
-    nrf24l01_reg_rx_pw_p3_t reg_rx_pw_p3 = { rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P3) };
-    nrf24l01_reg_rx_pw_p4_t reg_rx_pw_p4 = { rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P4) };
-    nrf24l01_reg_rx_pw_p5_t reg_rx_pw_p5 = { rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P5) };
-    nrf24l01_reg_fifo_status_t reg_fifo_status = { rf24_read_reg8(rf24, NRF24L01_REG_FIFO_STATUS) };
-    nrf24l01_reg_dynpd_t reg_dynpd = { rf24_read_reg8(rf24, NRF24L01_REG_DYNPD) };
-    nrf24l01_reg_feature_t reg_feature = { rf24_read_reg8(rf24, NRF24L01_REG_FEATURE) };
+    nrf24l01_reg_1byte_addr_t reg_rx_addr_p2 = {rf24_read_reg8(rf24, NRF24L01_REG_RX_ADDR_P2)};
+    nrf24l01_reg_1byte_addr_t reg_rx_addr_p3 = {rf24_read_reg8(rf24, NRF24L01_REG_RX_ADDR_P3)};
+    nrf24l01_reg_1byte_addr_t reg_rx_addr_p4 = {rf24_read_reg8(rf24, NRF24L01_REG_RX_ADDR_P4)};
+    nrf24l01_reg_1byte_addr_t reg_rx_addr_p5 = {rf24_read_reg8(rf24, NRF24L01_REG_RX_ADDR_P5)};
+    nrf24l01_reg_rx_pw_p0_t reg_rx_pw_p0 = {rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P0)};
+    nrf24l01_reg_rx_pw_p1_t reg_rx_pw_p1 = {rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P1)};
+    nrf24l01_reg_rx_pw_p2_t reg_rx_pw_p2 = {rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P2)};
+    nrf24l01_reg_rx_pw_p3_t reg_rx_pw_p3 = {rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P3)};
+    nrf24l01_reg_rx_pw_p4_t reg_rx_pw_p4 = {rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P4)};
+    nrf24l01_reg_rx_pw_p5_t reg_rx_pw_p5 = {rf24_read_reg8(rf24, NRF24L01_REG_RX_PW_P5)};
+    nrf24l01_reg_fifo_status_t reg_fifo_status = {rf24_read_reg8(rf24, NRF24L01_REG_FIFO_STATUS)};
+    nrf24l01_reg_dynpd_t reg_dynpd = {rf24_read_reg8(rf24, NRF24L01_REG_DYNPD)};
+    nrf24l01_reg_feature_t reg_feature = {rf24_read_reg8(rf24, NRF24L01_REG_FEATURE)};
 
     PRINTF("=== REGISTER DUMP\r\n");
     PRINTF(
