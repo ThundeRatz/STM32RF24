@@ -12,6 +12,9 @@
  * @date 10/2019
  */
 
+#ifndef __NRF24L01_REGISTERS_H__
+#define __NRF24L01_REGISTERS_H__
+
 #include <stdint.h>
 
 typedef enum nrf24l01_spi_commands {
@@ -361,3 +364,5 @@ typedef union nrf24l01_reg_feature {
         uint8_t _reserved : 5;
     };
 } nrf24l01_reg_feature_t;
+
+#endif // __NRF24L01_REGISTERS_H__

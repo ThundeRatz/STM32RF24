@@ -38,25 +38,35 @@ rf24_t rf24_get_default_config(void) {
 }
 
 bool rf24_init(rf24_t* rf24) {
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+    nrf24l01_reg_rf_setup_t rf_setup_reg;
+
     rf24_end_transaction(rf24);
 
     HAL_Delay(5);
 
-    rf24_write_reg8(rf24, NRF24L01_REG_CONFIG, 0x0C);
+    // if (platform_status == RF24_STATUS_SUCCESS) {
+        platform_status = rf24_write_reg8(rf24, NRF24L01_REG_CONFIG, 0x0C);
+    // }
 
     rf24_set_retries(rf24, 5, 15);
 
     rf24_set_datarate(rf24, rf24->datarate);
 
-    uint8_t setup = rf24_read_reg8(rf24, NRF24L01_REG_RF_SETUP);
+    // if (platform_status == RF24_STATUS_SUCCESS) {
+        rf_setup_reg.value = rf24_read_reg8(rf24, NRF24L01_REG_RF_SETUP);
+    // }
 
-    rf24_set_datarate(rf24, RF24_1MBPS);
-
+    // if (platform_status == RF24_STATUS_SUCCESS) {
     nrf24l01_reg_feature_t reg_feature = {0x00};
+        reg_feature.en_dyn_ack = 1;
+        platform_status = rf24_write_reg8(rf24, NRF24L01_REG_FEATURE, reg_feature.value);
+    // }
+
+    // if (platform_status == RF24_STATUS_SUCCESS) {
     nrf24l01_reg_dynpd_t reg_dynpd = {0x00};
-    reg_feature.en_dyn_ack = 1;
-    rf24_write_reg8(rf24, NRF24L01_REG_FEATURE, reg_feature.value);
-    rf24_write_reg8(rf24, NRF24L01_REG_DYNPD, reg_dynpd.value);
+        platform_status = rf24_write_reg8(rf24, NRF24L01_REG_DYNPD, reg_dynpd.value);
+    // }
 
     rf24_set_channel(rf24, rf24->channel);
 
@@ -71,7 +81,7 @@ bool rf24_init(rf24_t* rf24) {
 
     // rf24_enable(rf24); Vou fazer no start listening
 
-    return ((setup != 0) && (setup != 0xff));
+    return ((rf_setup_reg.value != 0) && (rf_setup_reg.value != 0xff));
 }
 
 void rf24_power_up(rf24_t* rf24) {
@@ -96,14 +106,6 @@ void rf24_power_down(rf24_t* rf24) {
     rf24_disable(rf24);
     reg_config.pwr_up = 0;
     rf24_write_reg8(rf24, NRF24L01_REG_CONFIG, reg_config.value);
-}
-
-void rf24_enable(rf24_t* rf24) {
-    HAL_GPIO_WritePin(rf24->ce_port, rf24->ce_pin, GPIO_PIN_SET);
-}
-
-void rf24_disable(rf24_t* rf24) {
-    HAL_GPIO_WritePin(rf24->ce_port, rf24->ce_pin, GPIO_PIN_RESET);
 }
 
 void rf24_set_channel(rf24_t* rf24, uint8_t ch) {
@@ -282,7 +284,7 @@ void rf24_stop_listening(rf24_t* p_rf24) {
 }
 
 nrf24l01_reg_status_t rf24_get_status(rf24_t* p_rf24) {
-    return (rf24_send_command(p_rf24, NRF24L01_COMM_NOP));
+    return rf24_platform_get_status(p_rf24);
 }
 
 bool rf24_available(rf24_t* p_rf24, uint8_t* pipe_number) {
@@ -301,138 +303,53 @@ bool rf24_available(rf24_t* p_rf24, uint8_t* pipe_number) {
 }
 
 bool rf24_read(rf24_t* p_rf24, uint8_t* buff, uint8_t len) {
-    nrf24l01_reg_status_t status = rf24_read_payload(p_rf24, buff, len);
+    rf24_platform_status_t platform_status = rf24_read_payload(p_rf24, buff, len);
+    nrf24l01_reg_status_t status_reg = rf24_get_status(p_rf24);
 
     // Limpando a interrupt de data ready, porém não usamos ela em nenhum lugar ainda
-    status.rx_dr = 1;
-    rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status.value);
+    status_reg.rx_dr = 1;
+    rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status_reg.value);
 
     return true;
 }
 
 bool rf24_write(rf24_t* p_rf24, uint8_t* buff, uint8_t len, bool enable_auto_ack) {
-    nrf24l01_reg_status_t status = rf24_get_status(p_rf24);
+    rf24_platform_status_t platform_status;
+    nrf24l01_reg_status_t status_reg = rf24_get_status(p_rf24);
 
-    if (status.tx_full) {
+    if (status_reg.tx_full) {
         return false;
     }
 
-    status = rf24_write_payload(p_rf24, buff, len, enable_auto_ack);
+    platform_status = rf24_write_payload(p_rf24, buff, len, enable_auto_ack);
+
+    status_reg = rf24_get_status(p_rf24);
 
     rf24_enable(p_rf24);
 
     do {
-        status = rf24_get_status(p_rf24);
-    } while (!status.tx_ds && !status.max_rt);
+        status_reg = rf24_get_status(p_rf24);
+    } while (!status_reg.tx_ds && !status_reg.max_rt);
 
     rf24_disable(p_rf24);
 
     // Max retries exceeded
-    if (status.max_rt) {
-        status.max_rt = 1; // O datasheet manda escerever 1 no bit para limpar a interrupcao (muito estranho esse codigo aqui)
-        rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status.value);
+    if (status_reg.max_rt) {
+        status_reg.max_rt = 1; // O datasheet manda escerever 1 no bit para limpar a interrupcao (muito estranho esse codigo aqui)
+        rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status_reg.value);
         rf24_flush_tx(p_rf24); // Only going to be 1 packet int the FIFO at a time using this method, so just flush
         return false;
     }
 
-    status.tx_ds = 1;
-    rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status.value);
+    status_reg.tx_ds = 1;
+    rf24_write_reg8(p_rf24, NRF24L01_REG_STATUS, status_reg.value);
 
     return true;
 }
 
 // read/write register functions
 
-void rf24_begin_transaction(rf24_t* rf24) {
-    HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_RESET);
-}
 
-void rf24_end_transaction(rf24_t* rf24) {
-    HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_SET);
-}
-
-nrf24l01_reg_status_t rf24_send_command(rf24_t* rf24, nrf24l01_spi_commands_t command) {
-    nrf24l01_reg_status_t status;
-
-    rf24_begin_transaction(rf24);
-    HAL_SPI_TransmitReceive(rf24->hspi, &command, &(status.value), 1, rf24->spi_timeout);
-    rf24_end_transaction(rf24);
-
-    return status;
-}
-
-nrf24l01_reg_status_t rf24_read_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buff, uint8_t len) {
-    nrf24l01_reg_status_t status;
-
-    rf24_begin_transaction(rf24);
-
-    // Transmit command byte
-    uint8_t command = NRF24L01_COMM_R_REGISTER | (NRF24L01_COMM_RW_REGISTER_MASK & reg);
-    HAL_SPI_TransmitReceive(rf24->hspi, &command, &(status.value), 1, rf24->spi_timeout);
-
-    HAL_SPI_Receive(rf24->hspi, buff, len, rf24->spi_timeout);
-
-    rf24_end_transaction(rf24);
-
-    return status;
-}
-
-uint8_t rf24_read_reg8(rf24_t* rf24, nrf24l01_registers_t reg) {
-    uint8_t val;
-    rf24_read_register(rf24, reg, &val, 1);
-
-    return val;
-}
-
-nrf24l01_reg_status_t rf24_write_register(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t* buff, uint8_t len) {
-    nrf24l01_reg_status_t status;
-
-    rf24_begin_transaction(rf24);
-
-    uint8_t command = NRF24L01_COMM_W_REGISTER | (NRF24L01_COMM_RW_REGISTER_MASK & reg);
-    HAL_SPI_TransmitReceive(rf24->hspi, &command, &(status.value), 1, rf24->spi_timeout);
-
-    HAL_SPI_Transmit(rf24->hspi, buff, len, rf24->spi_timeout);
-
-    rf24_end_transaction(rf24);
-
-    return status;
-}
-
-void rf24_write_reg8(rf24_t* rf24, nrf24l01_registers_t reg, uint8_t value) {
-    rf24_write_register(rf24, reg, &value, 1);
-}
-
-nrf24l01_reg_status_t rf24_read_payload(rf24_t* p_rf24, uint8_t* buff, uint8_t len) {
-    nrf24l01_reg_status_t status;
-
-    rf24_begin_transaction(p_rf24);
-
-    uint8_t command = NRF24L01_COMM_R_RX_PAYLOAD;
-    HAL_SPI_TransmitReceive(p_rf24->hspi, &command, &(status.value), 1, p_rf24->spi_timeout);
-
-    HAL_SPI_Receive(p_rf24->hspi, buff, len, p_rf24->spi_timeout);
-
-    rf24_end_transaction(p_rf24);
-
-    return status;
-}
-
-nrf24l01_reg_status_t rf24_write_payload(rf24_t* p_rf24, uint8_t* buff, uint8_t len, bool enable_auto_ack) {
-    nrf24l01_reg_status_t status;
-
-    rf24_begin_transaction(p_rf24);
-
-    uint8_t command = enable_auto_ack ? (NRF24L01_COMM_W_TX_PAYLOAD) : (NRF24L01_COMM_W_TX_PAYLOAD_NOACK);
-
-    HAL_SPI_TransmitReceive(p_rf24->hspi, &command, &(status.value), 1, p_rf24->spi_timeout);
-
-    HAL_SPI_Transmit(p_rf24->hspi, buff, len, p_rf24->spi_timeout);
-
-    rf24_end_transaction(p_rf24);
-
-    return status;
-}
 
 #ifdef DEBUG
 void rf24_dump_registers(rf24_t* rf24) {
