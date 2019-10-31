@@ -12,11 +12,12 @@
 #ifndef __RF24_PLATFORM_H__
 #define __RF24_PLATFORM_H__
 
+#include <stdbool.h>
+
 #include "gpio.h"
 #include "spi.h"
 
-#include "nrf24l01_registers.h" // @todo arrumar
-#include <stdbool.h>
+#include "nrf24l01_registers.h"
 
 /*****************************************
  * Public Types
@@ -67,6 +68,15 @@ typedef struct __attribute__((packed)) rf24 {
  *****************************************/
 
 /**
+ * @brief Initializes platform.
+ *
+ * @param p_rf24 Pointer to rf24 instance
+ *
+ * @return @ref rf24_platform_status.
+ */
+rf24_platform_status_t rf24_platform_init(rf24_t* p_rf24);
+
+/**
  * @brief Enables the rf24 chip.
  *
  * @param p_rf24 Pointer to rf24 instance
@@ -85,24 +95,6 @@ rf24_platform_status_t rf24_enable(rf24_t* rf24);
 rf24_platform_status_t rf24_disable(rf24_t* rf24);
 
 /**
- * @brief Begins SPI transaction.
- *
- * @param p_rf24 Pointer to rf24 instance
- *
- * @return @ref rf24_platform_status.
- */
-rf24_platform_status_t rf24_begin_transaction(rf24_t* rf24);
-
-/**
- * @brief Ends SPI transaction.
- *
- * @param p_rf24 Pointer to rf24 instance
- *
- * @return @ref rf24_platform_status.
- */
-rf24_platform_status_t rf24_end_transaction(rf24_t* rf24);
-
-/**
  * @brief Send SPI command.
  *
  * @param p_rf24    Pointer to rf24 instance
@@ -112,7 +104,15 @@ rf24_platform_status_t rf24_end_transaction(rf24_t* rf24);
  */
 rf24_platform_status_t rf24_send_command(rf24_t* rf24, nrf24l01_spi_commands_t command);
 
-nrf24l01_reg_status_t rf24_platform_get_status(rf24_t *rf24);
+/**
+ * @brief Gets status register value.
+ *
+ * @param p_rf24         Pointer to rf24 instance
+ * @param p_status_reg   Pointer to a variable to store the status.
+ *
+ * @return @ref rf24_platform_status.
+ */
+rf24_platform_status_t rf24_platform_get_status(rf24_t *rf24, nrf24l01_reg_status_t* p_status_reg);
 
 /**
  * @brief Read register from device.
@@ -129,12 +129,13 @@ rf24_platform_status_t rf24_read_register(rf24_t* rf24, nrf24l01_registers_t reg
 /**
  * @brief Read a 8 bit register from device.
  *
- * @param p_rf24    Pointer to rf24 instance
- * @param reg       Register to be read
+ * @param p_rf24      Pointer to rf24 instance
+ * @param reg         Register to be read
+ * @param p_reg_value Pointer to a variable to store the value from the register.
  *
  * @return Register value.
  */
-uint8_t rf24_read_reg8(rf24_t* rf24, nrf24l01_registers_t reg);
+rf24_platform_status_t rf24_read_reg8(rf24_t *rf24, nrf24l01_registers_t reg, uint8_t* p_reg_value );
 
 /**
  * @brief Write device register.

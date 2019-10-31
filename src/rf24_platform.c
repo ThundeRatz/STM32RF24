@@ -12,8 +12,38 @@
 #include "rf24_platform.h"
 
 /*****************************************
+ * Private Functions Prototypes
+ *****************************************/
+
+/**
+ * @brief Begins SPI transaction.
+ *
+ * @param p_rf24 Pointer to rf24 instance
+ *
+ * @return @ref rf24_platform_status.
+ */
+static rf24_platform_status_t rf24_begin_transaction(rf24_t* rf24);
+
+/**
+ * @brief Ends SPI transaction.
+ *
+ * @param p_rf24 Pointer to rf24 instance
+ *
+ * @return @ref rf24_platform_status.
+ */
+static rf24_platform_status_t rf24_end_transaction(rf24_t* rf24);
+
+/*****************************************
  * Public Functions Bodies Definitions
  *****************************************/
+
+rf24_platform_status_t rf24_platform_init(rf24_t* p_rf24) {
+    rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
+
+    rf24_end_transaction(p_rf24);
+
+    return status;
+}
 
 rf24_platform_status_t rf24_enable(rf24_t *rf24) {
     rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
@@ -27,22 +57,6 @@ rf24_platform_status_t rf24_disable(rf24_t *rf24) {
     rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
 
     HAL_GPIO_WritePin(rf24->ce_port, rf24->ce_pin, GPIO_PIN_RESET);
-
-    return status;
-}
-
-rf24_platform_status_t rf24_begin_transaction(rf24_t *rf24) {
-    rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
-
-    HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_RESET);
-
-    return status;
-}
-
-rf24_platform_status_t rf24_end_transaction(rf24_t *rf24) {
-    rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
-
-    HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_SET);
 
     return status;
 }
@@ -63,13 +77,13 @@ rf24_platform_status_t rf24_send_command(rf24_t *rf24, nrf24l01_spi_commands_t c
     return status;
 }
 
-nrf24l01_reg_status_t rf24_platform_get_status(rf24_t *rf24)
+rf24_platform_status_t rf24_platform_get_status(rf24_t *rf24, nrf24l01_reg_status_t* p_status_reg)
 {
     rf24_platform_status_t status;
     HAL_StatusTypeDef hal_status;
     nrf24l01_reg_status_t status_reg;
 
-    nrf24l01_spi_commands_t command= NRF24L01_COMM_NOP;
+    nrf24l01_spi_commands_t command = NRF24L01_COMM_NOP;
 
     rf24_begin_transaction(rf24);
 
@@ -77,8 +91,11 @@ nrf24l01_reg_status_t rf24_platform_get_status(rf24_t *rf24)
 
     rf24_end_transaction(rf24);
 
+    *p_status_reg = status_reg;
+
     status = (rf24_platform_status_t) hal_status;
-    return status_reg;
+
+    return status;
 }
 
 rf24_platform_status_t rf24_read_register(rf24_t *rf24, nrf24l01_registers_t reg, uint8_t *buff, uint8_t len)
@@ -103,11 +120,9 @@ rf24_platform_status_t rf24_read_register(rf24_t *rf24, nrf24l01_registers_t reg
     return status;
 }
 
-uint8_t rf24_read_reg8(rf24_t *rf24, nrf24l01_registers_t reg)
+rf24_platform_status_t rf24_read_reg8(rf24_t *rf24, nrf24l01_registers_t reg, uint8_t* p_reg_value)
 {
-    uint8_t val;
-    rf24_read_register(rf24, reg, &val, 1);
-    return val;
+    return rf24_read_register(rf24, reg, p_reg_value, 1);
 }
 
 rf24_platform_status_t rf24_write_register(rf24_t *rf24, nrf24l01_registers_t reg, uint8_t *buff, uint8_t len)
@@ -175,5 +190,25 @@ rf24_platform_status_t rf24_write_payload(rf24_t *p_rf24, uint8_t *buff, uint8_t
     rf24_end_transaction(p_rf24);
 
     status = (rf24_platform_status_t) hal_status;
+    return status;
+}
+
+/*****************************************
+ * Private Functions Bodies Definitions
+ *****************************************/
+
+rf24_platform_status_t rf24_begin_transaction(rf24_t *rf24) {
+    rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
+
+    HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_RESET);
+
+    return status;
+}
+
+rf24_platform_status_t rf24_end_transaction(rf24_t *rf24) {
+    rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
+
+    HAL_GPIO_WritePin(rf24->csn_port, rf24->csn_pin, GPIO_PIN_SET);
+
     return status;
 }
