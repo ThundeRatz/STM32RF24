@@ -18,13 +18,44 @@
 #include <stdio.h>
 #include <string.h>
 
+/*****************************************
+ * Private Macros
+ *****************************************/
+
 #ifdef DEBUG
 #define PRINTF printf
 #else
 #define PRINTF(...)
 #endif
 
-uint32_t txDelay = 250;
+#define _BS(bit) (1 << (bit))
+
+/*****************************************
+ * Private Variables
+ *****************************************/
+
+static const uint8_t child_pipe[] = {RX_ADDR_P0, RX_ADDR_P1, RX_ADDR_P2, RX_ADDR_P3, RX_ADDR_P4, RX_ADDR_P5};
+
+static const uint8_t child_payload_size[] = {RX_PW_P0, RX_PW_P1, RX_PW_P2, RX_PW_P3, RX_PW_P4, RX_PW_P5};
+
+static const uint8_t child_pipe_enable[] = {ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_P4, ERX_P5};
+
+/**
+ *
+ * The driver will delay for this duration when stopListening() is called
+ *
+ * When responding to payloads, faster devices like ARM(RPi) are much faster than Arduino:
+ * 1. Arduino sends data to RPi, switches to RX mode
+ * 2. The RPi receives the data, switches to TX mode and sends before the Arduino radio is in RX mode
+ * 3. If AutoACK is disabled, this can be set as low as 0. If AA/ESB enabled, set to 100uS minimum on RPi
+ *
+ * @warning If set to 0, ensure 130uS delay after stopListening() and before any sends
+ */
+static uint32_t txDelay = 250; // q merda é essa?? eu n sei
+
+/*****************************************
+ * Public Functions Bodies Definitions
+ *****************************************/
 
 rf24_dev_t rf24_get_default_config(void) {
     return (rf24_dev_t) {
@@ -39,109 +70,188 @@ rf24_dev_t rf24_get_default_config(void) {
     };
 }
 
-bool rf24_init(rf24_dev_t* p_dev) {
+rf24_status_t rf24_init(rf24_dev_t* p_dev) {
+    rf24_status_t dev_status = RF24_SUCCESS;
     rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
     nrf24l01_reg_rf_setup_t rf_setup_reg;
 
-    rf24_platform_init(&(p_dev->platform_setup));
+    if (dev_status == RF24_SUCCESS) {
+        rf24_platform_init(&(p_dev->platform_setup));
+    }
 
     HAL_Delay(5);
 
-    // if (platform_status == RF24_STATUS_SUCCESS) {
+    if (dev_status == RF24_SUCCESS) {
         platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, 0x0C);
-    // }
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
-    rf24_set_retries(p_dev, 5, 15);
+    if (dev_status == RF24_SUCCESS) {
+        dev_status = rf24_set_retries(p_dev, 5, 15);
+    }
 
-    rf24_set_datarate(p_dev, p_dev->datarate);
+    if (dev_status == RF24_SUCCESS) {
+        dev_status = rf24_set_datarate(p_dev, p_dev->datarate);
+    }
 
-    // if (platform_status == RF24_STATUS_SUCCESS) {
+    if (dev_status == RF24_SUCCESS) {
         platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, &(rf_setup_reg.value));
-    // }
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
-    // if (platform_status == RF24_STATUS_SUCCESS) {
-    nrf24l01_reg_feature_t reg_feature = {0x00};
+    if (dev_status == RF24_SUCCESS) {
+        nrf24l01_reg_feature_t reg_feature = {0x00};
         reg_feature.en_dyn_ack = 1;
         platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_FEATURE, reg_feature.value);
-    // }
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
-    // if (platform_status == RF24_STATUS_SUCCESS) {
-    nrf24l01_reg_dynpd_t reg_dynpd = {0x00};
+    if (dev_status == RF24_SUCCESS) {
+        nrf24l01_reg_dynpd_t reg_dynpd = {0x00};
         platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_DYNPD, reg_dynpd.value);
-    // }
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
-    rf24_set_channel(p_dev, p_dev->channel);
+    if (dev_status == RF24_SUCCESS) {
+        dev_status = rf24_set_channel(p_dev, p_dev->channel);
+    }
 
-    rf24_flush_rx(p_dev);
-    rf24_flush_tx(p_dev);
+    if (dev_status == RF24_SUCCESS) {
+        dev_status = rf24_flush_rx(p_dev);
+    }
 
-    rf24_power_up(p_dev);
+    if (dev_status == RF24_SUCCESS) {
+        dev_status = rf24_flush_tx(p_dev);
+    }
 
-    nrf24l01_reg_config_t reg_config;
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(reg_config.value));
+    if (dev_status == RF24_SUCCESS) {
+        dev_status = rf24_power_up(p_dev);
+    }
 
-    reg_config.prim_rx = 0;
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+    if (dev_status == RF24_SUCCESS) {
+        nrf24l01_reg_config_t reg_config;
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(reg_config.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
-    return ((rf_setup_reg.value != 0) && (rf_setup_reg.value != 0xff));
+        if (dev_status == RF24_SUCCESS) {
+            reg_config.prim_rx = 0;
+            rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+            dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+        }
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        if ((rf_setup_reg.value == 0) || (rf_setup_reg.value == 0xFF)){
+            dev_status = RF24_UNKNOWN_ERRO;
+        }
+    }
+
+    return dev_status;
 }
 
-void rf24_power_up(rf24_dev_t* p_dev) {
-    nrf24l01_reg_config_t reg_config;
+rf24_status_t rf24_power_up(rf24_dev_t* p_dev) {
+    rf24_status_t dev_status = RF24_SUCCESS;
     rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(reg_config.value));
+    nrf24l01_reg_config_t reg_config;
 
-    if (reg_config.pwr_up == 1) {
-        return;
+    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(reg_config.value));
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    if (dev_status == RF24_SUCCESS) {
+        if (reg_config.pwr_up == 1) {
+            return dev_status;
+        }
     }
 
     reg_config.pwr_up = 1;
     rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    //! @todo Dont use HAL_Delay()
     HAL_Delay(5);
+
+    return dev_status;
 }
 
-void rf24_power_down(rf24_dev_t* p_dev) {
-    nrf24l01_reg_config_t reg_config;
+rf24_status_t rf24_power_down(rf24_dev_t* p_dev) {
+    rf24_status_t dev_status = RF24_SUCCESS;
     rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(reg_config.value));
+    nrf24l01_reg_config_t reg_config;
 
-    if (reg_config.pwr_up == 0) {
-        return;
+    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(reg_config.value));
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    if (dev_status == RF24_SUCCESS) {
+        if (reg_config.pwr_up == 0) {
+            return dev_status;
+        }
     }
 
     rf24_platform_disable(&(p_dev->platform_setup));
     reg_config.pwr_up = 0;
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    return dev_status;
 }
 
-void rf24_set_channel(rf24_dev_t* p_dev, uint8_t ch) {
+rf24_status_t rf24_set_channel(rf24_dev_t* p_dev, uint8_t ch) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
     ch = ch > 125 ? 125 : ch; // TODO define
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_CH, ch);
-    p_dev->channel = ch;
+    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_CH, ch);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    if (dev_status == RF24_SUCCESS) {
+        p_dev->channel = ch;
+    }
+
+    return dev_status;
 }
 
 uint8_t rf24_get_channel(rf24_dev_t* p_dev) {
+    rf24_status_t dev_status = RF24_SUCCESS;
     rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
     nrf24l01_reg_rf_ch_t reg;
+
     platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_CH, &(reg.value));
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    if (dev_status != RF24_SUCCESS) {
+        return 0xFF;
+    }
+
     return reg.rf_ch;
 }
 
-void rf24_set_retries(rf24_dev_t* p_dev, uint8_t delay, uint8_t count) {
+rf24_status_t rf24_set_retries(rf24_dev_t* p_dev, uint8_t delay, uint8_t count) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
     nrf24l01_reg_setup_retr_t reg;
     reg.ard = delay;
     reg.arc = count;
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_SETUP_RETR, reg.value);
+
+    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_SETUP_RETR, reg.value);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    return dev_status;
 }
 
-bool rf24_set_datarate(rf24_dev_t* p_dev, rf24_datarate_t datarate) {
+rf24_status_t rf24_set_datarate(rf24_dev_t* p_dev, rf24_datarate_t datarate) {
+    rf24_status_t dev_status = RF24_SUCCESS;
     rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
     p_dev->datarate = datarate;
     nrf24l01_reg_rf_setup_t reg_rf_setup;
 
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, &(reg_rf_setup.value));
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, &(reg_rf_setup.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
-    // TODO Coisas com txDelay (??)
+    //! @todo Coisas com txDelay (??)
 
     switch (datarate) {
         case RF24_1MBPS: {
@@ -163,58 +273,98 @@ bool rf24_set_datarate(rf24_dev_t* p_dev, rf24_datarate_t datarate) {
         }
     }
 
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, reg_rf_setup.value);
-
-    uint8_t temp_reg;
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, &temp_reg);
-
-    if (temp_reg == reg_rf_setup.value) {
-        return true;
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, reg_rf_setup.value);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
     }
 
-    reg_rf_setup.value = temp_reg; // Pra que isso se não faz nada dps?
-    return false;
+    if (dev_status == RF24_SUCCESS) {
+        uint8_t temp_reg;
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, &temp_reg);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+        if (dev_status == RF24_SUCCESS) {
+            if (temp_reg != reg_rf_setup.value) {
+                dev_status = RF24_UNKNOWN_ERRO;
+            }
+        }
+    }
+
+    return dev_status;
 }
 
-bool rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t output_power) {
+rf24_status_t rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t output_power) {
+    rf24_status_t dev_status = RF24_SUCCESS;
     rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
     nrf24l01_reg_rf_setup_t reg_rf_setup;
 
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, &(reg_rf_setup.value));
-    reg_rf_setup.rf_pwr = (uint8_t) output_power;
-    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, reg_rf_setup.value);
-
-    uint8_t temp_reg;
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, &temp_reg);
-
-    if (temp_reg == reg_rf_setup.value) {
-        return true;
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, &(reg_rf_setup.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
     }
 
-    return false;
+    if (dev_status == RF24_SUCCESS) {
+        reg_rf_setup.rf_pwr = (uint8_t) output_power;
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, reg_rf_setup.value);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        uint8_t temp_reg;
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_SETUP, &temp_reg);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+        if (dev_status == RF24_SUCCESS) {
+            if (temp_reg != reg_rf_setup.value) {
+                dev_status = RF24_UNKNOWN_ERRO;
+            }
+        }
+    }
+
+    return dev_status;
 }
 
-void rf24_flush_rx(rf24_dev_t* p_dev) {
-    rf24_platform_send_command(&(p_dev->platform_setup), NRF24L01_COMM_FLUSH_RX);
+rf24_status_t rf24_flush_rx(rf24_dev_t* p_dev) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
+    platform_status = rf24_platform_send_command(&(p_dev->platform_setup), NRF24L01_COMM_FLUSH_RX);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    return dev_status;
 }
 
-void rf24_flush_tx(rf24_dev_t* p_dev) {
-    rf24_platform_send_command(&(p_dev->platform_setup), NRF24L01_COMM_FLUSH_TX);
+rf24_status_t rf24_flush_tx(rf24_dev_t* p_dev) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
+    platform_status = rf24_platform_send_command(&(p_dev->platform_setup), NRF24L01_COMM_FLUSH_TX);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    return dev_status;
 }
 
-void rf24_open_writing_pipe(rf24_dev_t* p_dev, uint8_t* address) {
-    rf24_platform_write_register(&(p_dev->platform_setup), NRF24L01_REG_RX_ADDR_P0, address, p_dev->addr_width);
-    rf24_platform_write_register(&(p_dev->platform_setup), NRF24L01_REG_TX_ADDR, address, p_dev->addr_width);
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RX_PW_P0, p_dev->payload_size);
+rf24_status_t rf24_open_writing_pipe(rf24_dev_t* p_dev, uint8_t* address) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
+    platform_status = rf24_platform_write_register(&(p_dev->platform_setup), NRF24L01_REG_RX_ADDR_P0, address, p_dev->addr_width);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    platform_status = rf24_platform_write_register(&(p_dev->platform_setup), NRF24L01_REG_TX_ADDR, address, p_dev->addr_width);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RX_PW_P0, p_dev->payload_size);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    return dev_status;
 }
 
-static const uint8_t child_pipe[] = {RX_ADDR_P0, RX_ADDR_P1, RX_ADDR_P2, RX_ADDR_P3, RX_ADDR_P4, RX_ADDR_P5};
+rf24_status_t rf24_open_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number, uint8_t* address) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
 
-static const uint8_t child_payload_size[] = {RX_PW_P0, RX_PW_P1, RX_PW_P2, RX_PW_P3, RX_PW_P4, RX_PW_P5};
-
-static const uint8_t child_pipe_enable[] = {ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_P4, ERX_P5};
-
-void rf24_open_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number, uint8_t* address) {
     // If this is pipe 0, cache the address.  This is needed because
     // openWritingPipe() will overwrite the pipe 0 address, so
     // startListening() will have to restore it.
@@ -225,92 +375,261 @@ void rf24_open_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number, uint8_t* add
     if (pipe_number <= 5) {
         // For pipes 2-5, only write the LSB
         if (pipe_number <= 1) {
-            rf24_platform_write_register(&(p_dev->platform_setup), child_pipe[pipe_number], address, p_dev->addr_width);
+            platform_status = rf24_platform_write_register(&(p_dev->platform_setup), child_pipe[pipe_number], address, p_dev->addr_width);
         } else {
-            rf24_platform_write_reg8(&(p_dev->platform_setup), child_pipe[pipe_number], address[0]);
+            platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), child_pipe[pipe_number], address[0]);
         }
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
-        rf24_platform_write_reg8(&(p_dev->platform_setup), child_payload_size[pipe_number], p_dev->payload_size);
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), child_payload_size[pipe_number], p_dev->payload_size);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    } else {
+        dev_status = RF24_INVALID_PARAMETERS;
     }
 
     // Note it would be more efficient to set all of the bits for all open
     // pipes at once.  However, I thought it would make the calling code
     // more simple to do it this way.
-    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
     nrf24l01_reg_en_rxaddr_t reg_en_rx_addr;
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, &(reg_en_rx_addr.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, &(reg_en_rx_addr.value));
-    reg_en_rx_addr.value |= _BS(child_pipe_enable[pipe_number]);
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
+    if (dev_status == RF24_SUCCESS) {
+        reg_en_rx_addr.value |= _BS(child_pipe_enable[pipe_number]);
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
+
+    return dev_status;
 }
 
-void rf24_close_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number) {
+rf24_status_t rf24_close_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number) {
+    rf24_status_t dev_status = RF24_SUCCESS;
     rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
     nrf24l01_reg_en_rxaddr_t reg_en_rx_addr;
 
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, &(reg_en_rx_addr.value));
-    reg_en_rx_addr.value &= (~_BS(child_pipe_enable[pipe_number]));
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, &(reg_en_rx_addr.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        reg_en_rx_addr.value &= (~_BS(child_pipe_enable[pipe_number]));
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
+
+    return dev_status;
 }
 
-void rf24_start_listening(rf24_dev_t* p_dev) {
+rf24_status_t rf24_start_listening(rf24_dev_t* p_dev) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+
     rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
     nrf24l01_reg_config_t reg_config;
     nrf24l01_reg_status_t reg_status;
 
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(reg_config.value));
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(reg_config.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
-    reg_config.value |= _BS(PRIM_RX);
-    reg_status.value = (_BS(RX_DR) | _BS(TX_DS) | _BS(MAX_RT));
+        reg_config.value |= _BS(PRIM_RX);
+        reg_status.value = (_BS(RX_DR) | _BS(TX_DS) | _BS(MAX_RT));
 
-    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
-    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, reg_status.value);
+        if (dev_status == RF24_SUCCESS) {
+            platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+            dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
-    // rf24_platform_enable estava aqui, coloquei pro final da função
+            platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, reg_status.value);
+            dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+        }
+    }
 
-    if (p_dev->pipe0_reading_address[0] > 0) {
-        platform_status = rf24_platform_write_register(&(p_dev->platform_setup), NRF24L01_REG_RX_ADDR_P0, p_dev->pipe0_reading_address, p_dev->addr_width);
-    } else {
-        rf24_close_reading_pipe(p_dev, 0);
+    if (dev_status == RF24_SUCCESS) {
+        if (p_dev->pipe0_reading_address[0] > 0) {
+            platform_status = rf24_platform_write_register(&(p_dev->platform_setup), NRF24L01_REG_RX_ADDR_P0, p_dev->pipe0_reading_address, p_dev->addr_width);
+            dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+        } else {
+            dev_status = rf24_close_reading_pipe(p_dev, 0);
+        }
     }
 
     // Flush buffers
-    rf24_flush_rx(p_dev);
-    nrf24l01_reg_feature_t reg_feature;
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_FEATURE, &(reg_feature.value));
-
-    if (reg_feature.en_ack_pay) {
-        rf24_flush_tx(p_dev);
+    if (dev_status == RF24_SUCCESS) {
+        dev_status = rf24_flush_rx(p_dev);
     }
 
-    rf24_platform_enable(&(p_dev->platform_setup)); // isso deveria ser no final da função?
+    if (dev_status == RF24_SUCCESS) {
+        nrf24l01_reg_feature_t reg_feature;
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_FEATURE, &(reg_feature.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+        if (dev_status == RF24_SUCCESS) {
+            if (reg_feature.en_ack_pay) {
+                dev_status = rf24_flush_tx(p_dev);
+            }
+        }
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_enable(&(p_dev->platform_setup));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
+
+    return dev_status;
 }
 
-void rf24_stop_listening(rf24_dev_t* p_dev) {
+rf24_status_t rf24_stop_listening(rf24_dev_t* p_dev) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
     rf24_platform_disable(&(p_dev->platform_setup));
 
+    //! @todo do not use HAL_Delay
     HAL_Delay(txDelay);
 
-    rf24_flush_rx(p_dev);
-    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+    dev_status = rf24_flush_rx(p_dev);
+
     nrf24l01_reg_feature_t reg_feature;
 
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_FEATURE, &(reg_feature.value));
-
-    if (reg_feature.en_ack_pay) {
-        HAL_Delay(txDelay); // 200
-        rf24_flush_tx(p_dev);
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_FEATURE, &(reg_feature.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
     }
 
-    nrf24l01_reg_config_t reg_config;
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(reg_config.value));
-    reg_config.value &= (~_BS(PRIM_RX));
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+    if (reg_feature.en_ack_pay) {
+        //! @todo do not use HAL_Delay
+        HAL_Delay(txDelay);  // 250
 
-    nrf24l01_reg_en_rxaddr_t reg_en_rx_addr;
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, &(reg_en_rx_addr.value));
-    reg_en_rx_addr.value |= _BS(child_pipe_enable[0]);
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
+        if (dev_status == RF24_SUCCESS) {
+            dev_status = rf24_flush_tx(p_dev);
+        }
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        nrf24l01_reg_config_t reg_config;
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(reg_config.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+        if (dev_status == RF24_SUCCESS) {
+            reg_config.value &= (~_BS(PRIM_RX));
+            platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+            dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+        }
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        nrf24l01_reg_en_rxaddr_t reg_en_rx_addr;
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, &(reg_en_rx_addr.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+        reg_en_rx_addr.value |= _BS(child_pipe_enable[0]);
+
+        if (dev_status == RF24_SUCCESS) {
+            platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_EN_RXADDR, reg_en_rx_addr.value);
+            dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+        }
+    }
+
+    return dev_status;
+}
+
+
+rf24_status_t rf24_available(rf24_dev_t* p_dev, uint8_t* pipe_number) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+    nrf24l01_reg_fifo_status_t reg_fifo_status;
+
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_FIFO_STATUS, &(reg_fifo_status.value));
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
+
+    if (reg_fifo_status.rx_empty) {
+        dev_status = RF24_RX_FIFO_EMPTY;
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        if (pipe_number) {
+            nrf24l01_reg_status_t reg_status = rf24_get_status(p_dev);
+            (*pipe_number) = (uint8_t) reg_status.rx_p_no;
+        }
+    }
+
+    return dev_status;
+}
+
+rf24_status_t rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
+    if (len < p_dev->payload_size) {
+        return RF24_BUFFER_TOO_SMALL;
+    }
+
+    nrf24l01_reg_status_t status_reg = rf24_get_status(p_dev);
+
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_read_payload(&(p_dev->platform_setup), buff, len);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
+
+    // Limpando a interrupt de data ready, porém não usamos ela em nenhum lugar ainda
+    if (dev_status == RF24_SUCCESS) {
+        status_reg.rx_dr = 1;
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_INTERRUPT_NOT_CLEARED);
+    }
+
+    return dev_status;
+}
+
+rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool enable_auto_ack) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
+    nrf24l01_reg_status_t status_reg = rf24_get_status(p_dev);
+
+    if (status_reg.tx_full) {
+        return RF24_TX_FIFO_FULL;
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_write_payload(&(p_dev->platform_setup), buff, len, enable_auto_ack);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        rf24_platform_enable(&(p_dev->platform_setup));
+    }
+
+    do {
+        status_reg = rf24_get_status(p_dev);
+    } while (!status_reg.tx_ds && !status_reg.max_rt);
+
+    if (dev_status == RF24_SUCCESS) {
+        rf24_platform_disable(&(p_dev->platform_setup));
+    }
+
+    // Max retries exceeded
+    if (status_reg.max_rt) {
+        dev_status = RF24_MAX_RETRANSMIT;
+
+        status_reg.max_rt = 1; // O datasheet manda escerever 1 no bit para limpar a interrupcao
+        rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
+        rf24_flush_tx(p_dev); // Only going to be 1 packet int the FIFO at a time using this method, so just flush
+
+        return dev_status;
+    }
+
+    status_reg.tx_ds = 1;
+    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_INTERRUPT_NOT_CLEARED);
+
+
+    return dev_status;
 }
 
 nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev) {
@@ -323,72 +642,6 @@ nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev) {
 
     return status_reg;  // Bit 7 only allows 0, so 0xFF represents an erro value
 }
-
-bool rf24_available(rf24_dev_t* p_dev, uint8_t* pipe_number) {
-    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
-    nrf24l01_reg_fifo_status_t reg_fifo_status;
-    platform_status = rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_FIFO_STATUS, &(reg_fifo_status.value));
-
-    if (!reg_fifo_status.rx_empty) {
-        if (pipe_number) {
-            nrf24l01_reg_status_t reg_status = rf24_get_status(p_dev);
-            (*pipe_number) = (uint8_t) reg_status.rx_p_no;
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-bool rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len) {
-    rf24_platform_status_t platform_status = rf24_platform_read_payload(&(p_dev->platform_setup), buff, len);
-    nrf24l01_reg_status_t status_reg = rf24_get_status(p_dev);
-
-    // Limpando a interrupt de data ready, porém não usamos ela em nenhum lugar ainda
-    status_reg.rx_dr = 1;
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
-
-    return true;
-}
-
-bool rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool enable_auto_ack) {
-    rf24_platform_status_t platform_status;
-    nrf24l01_reg_status_t status_reg = rf24_get_status(p_dev);
-
-    if (status_reg.tx_full) {
-        return false;
-    }
-
-    platform_status = rf24_platform_write_payload(&(p_dev->platform_setup), buff, len, enable_auto_ack);
-
-    status_reg = rf24_get_status(p_dev);
-
-    rf24_platform_enable(&(p_dev->platform_setup));
-
-    do {
-        status_reg = rf24_get_status(p_dev);
-    } while (!status_reg.tx_ds && !status_reg.max_rt);
-
-    rf24_platform_disable(&(p_dev->platform_setup));
-
-    // Max retries exceeded
-    if (status_reg.max_rt) {
-        status_reg.max_rt = 1; // O datasheet manda escerever 1 no bit para limpar a interrupcao (muito estranho esse codigo aqui)
-        rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
-        rf24_flush_tx(p_dev); // Only going to be 1 packet int the FIFO at a time using this method, so just flush
-        return false;
-    }
-
-    status_reg.tx_ds = 1;
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
-
-    return true;
-}
-
-// read/write register functions
-
-
 
 #ifdef DEBUG
 
