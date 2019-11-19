@@ -106,17 +106,8 @@ rf24_status_t rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len);
 
 rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool enable_auto_ack);
 
-
 nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev);
 
 rf24_status_t rf24_delay(uint32_t ms);
-
-
-#ifdef DEBUG
-void rf24_dump_registers(rf24_dev_t* p_dev);
-
-void rf24_print_status(rf24_dev_t* p_dev);
-
-#endif
 
 #endif // __RF24_H__
