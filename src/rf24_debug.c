@@ -44,17 +44,6 @@
  */
 uint8_t rf24_debug_read_reg8(rf24_dev_t *p_dev, nrf24l01_registers_t reg);
 
-/**
- * @brief Gets status register value.
- *
- * @param p_dev Pointer to rf24 device.
- *
- * @return Status register value.
- * @retval 0xFF Returns 0xFF when got an error, because status bit
- *              7 only allows 0, so 0xFF is an invalid value.
- */
-nrf24l01_reg_status_t rf24_debug_get_status(rf24_dev_t *p_dev);
-
 /*****************************************
  * Public Functions Bodies Definitions
  *****************************************/
@@ -254,17 +243,4 @@ uint8_t rf24_debug_read_reg8(rf24_dev_t *p_dev, nrf24l01_registers_t reg)
     uint8_t value;
     rf24_platform_read_reg8(&(p_dev->platform_setup), reg, &value);
     return value;
-}
-
-nrf24l01_reg_status_t rf24_debug_get_status(rf24_dev_t *p_dev)
-{
-    nrf24l01_reg_status_t status_reg;
-    rf24_platform_status_t platform_status = rf24_platform_get_status(&(p_dev->platform_setup), &status_reg);
-
-    if (platform_status != RF24_PLATFORM_SUCCESS)
-    {
-        status_reg.value = 0xFF;
-    }
-
-    return status_reg;
 }
