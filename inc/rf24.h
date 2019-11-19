@@ -109,6 +109,8 @@ rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool ena
 
 nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev);
 
+rf24_status_t rf24_delay(uint32_t ms);
+
 
 #ifdef DEBUG
 void rf24_dump_registers(rf24_dev_t* p_dev);

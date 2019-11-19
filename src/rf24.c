@@ -80,7 +80,7 @@ rf24_status_t rf24_init(rf24_dev_t* p_dev) {
         rf24_platform_init(&(p_dev->platform_setup));
     }
 
-    HAL_Delay(5);
+    rf24_delay(5);
 
     if (dev_status == RF24_SUCCESS) {
         platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, 0x0C);
@@ -168,8 +168,7 @@ rf24_status_t rf24_power_up(rf24_dev_t* p_dev) {
     rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
     dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
-    //! @todo Dont use HAL_Delay()
-    HAL_Delay(5);
+    rf24_delay(5);
 
     return dev_status;
 }
@@ -488,8 +487,7 @@ rf24_status_t rf24_stop_listening(rf24_dev_t* p_dev) {
 
     rf24_platform_disable(&(p_dev->platform_setup));
 
-    //! @todo do not use HAL_Delay
-    HAL_Delay(txDelay);
+    rf24_delay(txDelay);
 
     dev_status = rf24_flush_rx(p_dev);
 
@@ -501,8 +499,7 @@ rf24_status_t rf24_stop_listening(rf24_dev_t* p_dev) {
     }
 
     if (reg_feature.en_ack_pay) {
-        //! @todo do not use HAL_Delay
-        HAL_Delay(txDelay);  // 250
+        rf24_delay(txDelay);  // 250
 
         if (dev_status == RF24_SUCCESS) {
             dev_status = rf24_flush_tx(p_dev);
@@ -642,6 +639,9 @@ nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev) {
 
     return status_reg;  // Bit 7 only allows 0, so 0xFF represents an erro value
 }
+
+__weak rf24_status_t rf24_delay(uint32_t ms);
+
 
 #ifdef DEBUG
 
