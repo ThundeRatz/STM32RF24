@@ -18,6 +18,39 @@
 #include "rf24_platform.h"
 
 /*****************************************
+ * Private Constants
+ *****************************************/
+
+/**
+ * @brief Defalt device values.
+ */
+#define DEFAULT_SPI_TIMEOUT_MS 1000U
+#define DEFAULT_PAYLOAD_SIZE   32U
+#define DEFAULT_ADDRESS_SIZE   5U
+#define DEFAULT_CHANNEL_MHZ    76U
+
+#define MAX_RETRANSMISSIONA 0xFU
+
+/**
+ * @brief Number of retransmissions delay steps.
+ *
+ * @note Each delay step is 250us.
+ *
+ * @note The delay can be calculated by (steps + 1) * 250
+ *       in microseconds.
+ *
+ * @note This delay is defined from end of transmission to start
+ *       of next transmission.
+*/
+#define NUM_OF_RETRANSMISSIONS_DELAY_STEPS 5U
+
+/**
+ * @brief Width of operationg frequency. RF module con operate
+ *        on frequencies from 2.400GHz to 2.525GHz.
+ */
+#define OPERATING_FREQUENCY_WIDTH_MHZ 125U
+
+/*****************************************
  * Private Macros
  *****************************************/
 
@@ -44,7 +77,7 @@ static const uint8_t child_pipe_enable[] = {ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_
  *
  * @warning If set to 0, ensure 130uS delay after stopListening() and before any sends
  */
-static uint32_t txDelay = 250; // q merda é essa?? eu n sei
+static uint32_t txDelay = 250; // q ***** é essa?? eu n sei
 
 /*****************************************
  * Public Functions Bodies Definitions
@@ -53,12 +86,12 @@ static uint32_t txDelay = 250; // q merda é essa?? eu n sei
 rf24_dev_t rf24_get_default_config(void) {
     return (rf24_dev_t) {
                .platform_setup = {
-                   .spi_timeout = 1000,
+                   .spi_timeout = DEFAULT_SPI_TIMEOUT_MS,
                },
-               .payload_size = 32,
-               .addr_width = 5,
+               .payload_size = DEFAULT_PAYLOAD_SIZE,
+               .addr_width = DEFAULT_ADDRESS_SIZE,
                .datarate = RF24_1MBPS,
-               .channel = 76,
+               .channel = DEFAULT_CHANNEL_MHZ,
                .pipe0_reading_address = {0, 0, 0, 0, 0},
     };
 }
@@ -81,7 +114,7 @@ rf24_status_t rf24_init(rf24_dev_t* p_dev) {
     }
 
     if (dev_status == RF24_SUCCESS) {
-        dev_status = rf24_set_retries(p_dev, 5, 15);
+        dev_status = rf24_set_retries(p_dev, NUM_OF_RETRANSMISSIONS_DELAY_STEPS, MAX_RETRANSMISSIONA);
     }
 
     if (dev_status == RF24_SUCCESS) {
@@ -192,7 +225,7 @@ rf24_status_t rf24_set_channel(rf24_dev_t* p_dev, uint8_t ch) {
     rf24_status_t dev_status = RF24_SUCCESS;
     rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
 
-    ch = ch > 125 ? 125 : ch; // TODO define
+    ch = ch > OPERATING_FREQUENCY_WIDTH_MHZ ? OPERATING_FREQUENCY_WIDTH_MHZ : ch;
     platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RF_CH, ch);
     dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
@@ -218,13 +251,13 @@ uint8_t rf24_get_channel(rf24_dev_t* p_dev) {
     return reg.rf_ch;
 }
 
-rf24_status_t rf24_set_retries(rf24_dev_t* p_dev, uint8_t delay, uint8_t count) {
+rf24_status_t rf24_set_retries(rf24_dev_t* p_dev, uint8_t delay_steps, uint8_t rt_count) {
     rf24_status_t dev_status = RF24_SUCCESS;
     rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
 
     nrf24l01_reg_setup_retr_t reg;
-    reg.ard = delay;
-    reg.arc = count;
+    reg.ard = delay_steps;
+    reg.arc = rt_count;
 
     platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_SETUP_RETR, reg.value);
     dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
@@ -380,7 +413,7 @@ rf24_status_t rf24_open_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number, uin
     }
 
     // Note it would be more efficient to set all of the bits for all open
-    // pipes at once.  However, I thought it would make the calling code
+    // pipes at once.  However, it was thought it would make the calling code
     // more simple to do it this way.
     nrf24l01_reg_en_rxaddr_t reg_en_rx_addr;
     if (dev_status == RF24_SUCCESS) {
@@ -566,7 +599,7 @@ rf24_status_t rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len) {
         dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
     }
 
-    // Limpando a interrupt de data ready, porém não usamos ela em nenhum lugar ainda
+    // Clears data ready interruption bit. But data ready utility still not implemented.
     if (dev_status == RF24_SUCCESS) {
         status_reg.rx_dr = 1;
         platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
@@ -607,9 +640,9 @@ rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool ena
     if (status_reg.max_rt) {
         dev_status = RF24_MAX_RETRANSMIT;
 
-        status_reg.max_rt = 1; // O datasheet manda escerever 1 no bit para limpar a interrupcao
+        status_reg.max_rt = 1; // Datasheet says to write 1 to clear the interruption bit.
         rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
-        rf24_flush_tx(p_dev); // Only going to be 1 packet int the FIFO at a time using this method, so just flush
+        rf24_flush_tx(p_dev); // Only going to be 1 packet in the FIFO at a time using this method, so just flush.
 
         return dev_status;
     }
@@ -627,10 +660,10 @@ nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev) {
     rf24_platform_status_t platform_status = rf24_platform_get_status(&(p_dev->platform_setup), &status_reg);
 
     if (platform_status != RF24_PLATFORM_SUCCESS) {
-        status_reg.value = 0xFF;
+        status_reg.value = 0xFF; // Bit 7 only allows 0, so 0xFF represents an erro value.
     }
 
-    return status_reg;  // Bit 7 only allows 0, so 0xFF represents an erro value
+    return status_reg;
 }
 
 __weak rf24_status_t rf24_delay(uint32_t ms);
