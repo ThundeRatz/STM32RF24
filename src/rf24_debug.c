@@ -42,13 +42,13 @@
  *
  * @return Register value.
  */
-uint8_t rf24_debug_read_reg8(rf24_dev_t *p_dev, nrf24l01_registers_t reg);
+uint8_t rf24_debug_read_reg8(rf24_dev_t* p_dev, nrf24l01_registers_t reg);
 
 /*****************************************
  * Public Functions Bodies Definitions
  *****************************************/
 
-void rf24_debug_dump_registers(rf24_dev_t *p_dev)
+void rf24_debug_dump_registers(rf24_dev_t* p_dev)
 {
     PRINTF("================  REGISTER DUMP ================ \r\n");
 
@@ -225,7 +225,7 @@ void rf24_debug_dump_registers(rf24_dev_t *p_dev)
     PRINTF("\r\n");
 }
 
-void rf24_debug_print_status(rf24_dev_t *p_dev)
+void rf24_debug_print_status(rf24_dev_t* p_dev)
 {
     nrf24l01_reg_status_t reg_status = rf24_get_status(p_dev);
 
@@ -238,7 +238,7 @@ void rf24_debug_print_status(rf24_dev_t *p_dev)
  * Private Functions Bodies Definitions
  *****************************************/
 
-uint8_t rf24_debug_read_reg8(rf24_dev_t *p_dev, nrf24l01_registers_t reg)
+uint8_t rf24_debug_read_reg8(rf24_dev_t* p_dev, nrf24l01_registers_t reg)
 {
     uint8_t value;
     rf24_platform_read_reg8(&(p_dev->platform_setup), reg, &value);

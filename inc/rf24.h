@@ -41,7 +41,7 @@ typedef enum rf24_status {
 /**
  * @brief Output power options for transmitter.
  *
- * @note All values are negative.
+ * @note All output power values are negative.
  */
 typedef enum rf24_output_power {
     RF24_18_dBm = 0,
@@ -63,14 +63,14 @@ typedef enum rf24_datarate {
  * @brief rf24 device type.
  */
 typedef struct rf24_dev {
-    rf24_platform_t     platform_setup;
+    rf24_platform_t platform_setup;
 
-    uint8_t             payload_size;
-    uint8_t             addr_width;
-    rf24_datarate_t     datarate;
-    uint8_t             channel;
+    uint8_t         payload_size;
+    uint8_t         addr_width;
+    rf24_datarate_t datarate;
+    uint8_t         channel;
 
-    uint8_t             pipe0_reading_address[5]; /**< Last address set on pipe 0 for reading. */
+    uint8_t         pipe0_reading_address[5];     /**< Last address set on pipe 0 for reading. */
 } rf24_dev_t;
 
 /*****************************************
@@ -90,7 +90,7 @@ rf24_dev_t rf24_get_default_config(void);
  * @param p_dev Pointer to rf24 device.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_init(rf24_dev_t* p_dev);
 
 /**
@@ -99,7 +99,7 @@ rf24_status_t rf24_init(rf24_dev_t* p_dev);
  * @param p_dev Pointer to rf24 device.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_power_up(rf24_dev_t* p_dev);
 
 /**
@@ -108,7 +108,7 @@ rf24_status_t rf24_power_up(rf24_dev_t* p_dev);
  * @param p_dev Pointer to rf24 device.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_power_down(rf24_dev_t* p_dev);
 
 /**
@@ -122,7 +122,7 @@ rf24_status_t rf24_power_down(rf24_dev_t* p_dev);
  *       frequency will be set by 2.400GHz + ch MHz.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_set_channel(rf24_dev_t* p_dev, uint8_t ch);
 
 /**
@@ -134,7 +134,7 @@ rf24_status_t rf24_set_channel(rf24_dev_t* p_dev, uint8_t ch);
  * @param p_dev Pointer to rf24 device.
  *
  * @return Channel value.
-*/
+ */
 uint8_t rf24_get_channel(rf24_dev_t* p_dev);
 
 /**
@@ -152,7 +152,7 @@ uint8_t rf24_get_channel(rf24_dev_t* p_dev);
  *       retransmission is disabled.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_set_retries(rf24_dev_t* p_dev, uint8_t delay_steps, uint8_t rt_count);
 
 /**
@@ -162,7 +162,7 @@ rf24_status_t rf24_set_retries(rf24_dev_t* p_dev, uint8_t delay_steps, uint8_t r
  * @param datarate
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_set_datarate(rf24_dev_t* p_dev, rf24_datarate_t datarate);
 
 /**
@@ -172,7 +172,7 @@ rf24_status_t rf24_set_datarate(rf24_dev_t* p_dev, rf24_datarate_t datarate);
  * @param output_power
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t output_power);
 
 /**
@@ -181,7 +181,7 @@ rf24_status_t rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t outpu
  * @param p_dev Pointer to rf24 device.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_flush_rx(rf24_dev_t* p_dev);
 
 /**
@@ -190,7 +190,7 @@ rf24_status_t rf24_flush_rx(rf24_dev_t* p_dev);
  * @param p_dev Pointer to rf24 device.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_flush_tx(rf24_dev_t* p_dev);
 
 /**
@@ -200,7 +200,7 @@ rf24_status_t rf24_flush_tx(rf24_dev_t* p_dev);
  * @param address
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_open_writing_pipe(rf24_dev_t* p_dev, uint8_t* address);
 
 /**
@@ -211,7 +211,7 @@ rf24_status_t rf24_open_writing_pipe(rf24_dev_t* p_dev, uint8_t* address);
  * @param address
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_open_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number, uint8_t* address);
 
 /**
@@ -221,7 +221,7 @@ rf24_status_t rf24_open_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number, uin
  * @param pipe_number
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_close_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number);
 
 /**
@@ -230,7 +230,7 @@ rf24_status_t rf24_close_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number);
  * @param p_dev Pointer to rf24 device.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_start_listening(rf24_dev_t* p_dev);
 
 /**
@@ -239,7 +239,7 @@ rf24_status_t rf24_start_listening(rf24_dev_t* p_dev);
  * @param p_dev Pointer to rf24 device.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_stop_listening(rf24_dev_t* p_dev);
 
 /**
@@ -251,7 +251,7 @@ rf24_status_t rf24_stop_listening(rf24_dev_t* p_dev);
  * @note To don't ready a pipe, pass NULL as pipe_number argument.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_available(rf24_dev_t* p_dev, uint8_t* pipe_number);
 
 /**
@@ -262,7 +262,7 @@ rf24_status_t rf24_available(rf24_dev_t* p_dev, uint8_t* pipe_number);
  * @param len
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len);
 
 /**
@@ -274,7 +274,7 @@ rf24_status_t rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len);
  * @param enable_auto_ack Whether auto acknowledgement is enabled or not.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool enable_auto_ack);
 
 /**
@@ -296,7 +296,7 @@ nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev);
  * @param ms Delay in miliseconds.
  *
  * @return @ref rf24_status.
-*/
+ */
 rf24_status_t rf24_delay(uint32_t ms);
 
 #endif // __RF24_H__

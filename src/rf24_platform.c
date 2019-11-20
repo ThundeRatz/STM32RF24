@@ -45,7 +45,7 @@ rf24_platform_status_t rf24_platform_init(rf24_platform_t* p_setup) {
     return status;
 }
 
-rf24_platform_status_t rf24_platform_enable(rf24_platform_t *p_setup) {
+rf24_platform_status_t rf24_platform_enable(rf24_platform_t* p_setup) {
     rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
 
     HAL_GPIO_WritePin(p_setup->ce_port, p_setup->ce_pin, GPIO_PIN_SET);
@@ -53,7 +53,7 @@ rf24_platform_status_t rf24_platform_enable(rf24_platform_t *p_setup) {
     return status;
 }
 
-rf24_platform_status_t rf24_platform_disable(rf24_platform_t *p_setup) {
+rf24_platform_status_t rf24_platform_disable(rf24_platform_t* p_setup) {
     rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
 
     HAL_GPIO_WritePin(p_setup->ce_port, p_setup->ce_pin, GPIO_PIN_RESET);
@@ -61,8 +61,7 @@ rf24_platform_status_t rf24_platform_disable(rf24_platform_t *p_setup) {
     return status;
 }
 
-rf24_platform_status_t rf24_platform_send_command(rf24_platform_t* p_setup, nrf24l01_spi_commands_t command)
-{
+rf24_platform_status_t rf24_platform_send_command(rf24_platform_t* p_setup, nrf24l01_spi_commands_t command) {
     rf24_platform_status_t status;
     HAL_StatusTypeDef hal_status;
     nrf24l01_reg_status_t status_reg;
@@ -77,8 +76,7 @@ rf24_platform_status_t rf24_platform_send_command(rf24_platform_t* p_setup, nrf2
     return status;
 }
 
-rf24_platform_status_t rf24_platform_get_status(rf24_platform_t *p_setup, nrf24l01_reg_status_t* p_status_reg)
-{
+rf24_platform_status_t rf24_platform_get_status(rf24_platform_t* p_setup, nrf24l01_reg_status_t* p_status_reg) {
     rf24_platform_status_t status;
     HAL_StatusTypeDef hal_status;
     nrf24l01_reg_status_t status_reg;
@@ -98,8 +96,8 @@ rf24_platform_status_t rf24_platform_get_status(rf24_platform_t *p_setup, nrf24l
     return status;
 }
 
-rf24_platform_status_t rf24_platform_read_register(rf24_platform_t *p_setup, nrf24l01_registers_t reg, uint8_t *buff, uint8_t len)
-{
+rf24_platform_status_t rf24_platform_read_register(rf24_platform_t* p_setup, nrf24l01_registers_t reg, uint8_t* buff,
+                                                   uint8_t len) {
     rf24_platform_status_t status;
     HAL_StatusTypeDef hal_status;
     nrf24l01_reg_status_t status_reg;
@@ -120,13 +118,13 @@ rf24_platform_status_t rf24_platform_read_register(rf24_platform_t *p_setup, nrf
     return status;
 }
 
-rf24_platform_status_t rf24_platform_read_reg8(rf24_platform_t *p_setup, nrf24l01_registers_t reg, uint8_t* p_reg_value)
-{
+rf24_platform_status_t rf24_platform_read_reg8(rf24_platform_t* p_setup, nrf24l01_registers_t reg,
+                                               uint8_t* p_reg_value) {
     return rf24_platform_read_register(p_setup, reg, p_reg_value, 1);
 }
 
-rf24_platform_status_t rf24_platform_write_register(rf24_platform_t *p_setup, nrf24l01_registers_t reg, uint8_t *buff, uint8_t len)
-{
+rf24_platform_status_t rf24_platform_write_register(rf24_platform_t* p_setup, nrf24l01_registers_t reg, uint8_t* buff,
+                                                    uint8_t len) {
     rf24_platform_status_t status;
     HAL_StatusTypeDef hal_status;
     nrf24l01_reg_status_t status_reg;
@@ -146,13 +144,11 @@ rf24_platform_status_t rf24_platform_write_register(rf24_platform_t *p_setup, nr
     return status;
 }
 
-rf24_platform_status_t rf24_platform_write_reg8(rf24_platform_t *p_setup, nrf24l01_registers_t reg, uint8_t value)
-{
+rf24_platform_status_t rf24_platform_write_reg8(rf24_platform_t* p_setup, nrf24l01_registers_t reg, uint8_t value) {
     return rf24_platform_write_register(p_setup, reg, &value, 1);
 }
 
-rf24_platform_status_t rf24_platform_read_payload(rf24_platform_t *p_setup, uint8_t *buff, uint8_t len)
-{
+rf24_platform_status_t rf24_platform_read_payload(rf24_platform_t* p_setup, uint8_t* buff, uint8_t len) {
     rf24_platform_status_t status;
     HAL_StatusTypeDef hal_status;
     nrf24l01_reg_status_t status_reg;
@@ -172,8 +168,8 @@ rf24_platform_status_t rf24_platform_read_payload(rf24_platform_t *p_setup, uint
     return status;
 }
 
-rf24_platform_status_t rf24_platform_write_payload(rf24_platform_t *p_setup, uint8_t *buff, uint8_t len, bool enable_auto_ack)
-{
+rf24_platform_status_t rf24_platform_write_payload(rf24_platform_t* p_setup, uint8_t* buff, uint8_t len,
+                                                   bool enable_auto_ack) {
     rf24_platform_status_t status;
     HAL_StatusTypeDef hal_status;
     nrf24l01_reg_status_t status_reg;
@@ -197,7 +193,7 @@ rf24_platform_status_t rf24_platform_write_payload(rf24_platform_t *p_setup, uin
  * Private Functions Bodies Definitions
  *****************************************/
 
-rf24_platform_status_t rf24_begin_transaction(rf24_platform_t *p_setup) {
+rf24_platform_status_t rf24_begin_transaction(rf24_platform_t* p_setup) {
     rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
 
     HAL_GPIO_WritePin(p_setup->csn_port, p_setup->csn_pin, GPIO_PIN_RESET);
@@ -205,7 +201,7 @@ rf24_platform_status_t rf24_begin_transaction(rf24_platform_t *p_setup) {
     return status;
 }
 
-rf24_platform_status_t rf24_end_transaction(rf24_platform_t *p_setup) {
+rf24_platform_status_t rf24_end_transaction(rf24_platform_t* p_setup) {
     rf24_platform_status_t status = RF24_PLATFORM_SUCCESS;
 
     HAL_GPIO_WritePin(p_setup->csn_port, p_setup->csn_pin, GPIO_PIN_SET);
