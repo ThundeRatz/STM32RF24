@@ -36,7 +36,7 @@ typedef enum rf24_platform_status {
 /**
  * @brief Platform hardware related.
  */
-typedef struct __attribute__((packed)) rf24_platform {
+typedef struct rf24_platform {
     GPIO_TypeDef* csn_port;
     uint16_t csn_pin;
 
