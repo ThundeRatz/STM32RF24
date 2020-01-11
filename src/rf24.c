@@ -83,17 +83,18 @@ static uint32_t txDelay = 250; // q ***** é essa?? eu n sei
  * Public Functions Bodies Definitions
  *****************************************/
 
-rf24_dev_t rf24_get_default_config(void) {
-    return (rf24_dev_t) {
-               .platform_setup = {
-                   .spi_timeout = DEFAULT_SPI_TIMEOUT_MS,
-               },
-               .payload_size = DEFAULT_PAYLOAD_SIZE,
-               .addr_width = DEFAULT_ADDRESS_SIZE,
-               .datarate = RF24_1MBPS,
-               .channel = DEFAULT_CHANNEL_MHZ,
-               .pipe0_reading_address = {0, 0, 0, 0, 0},
-    };
+rf24_status_t rf24_get_default_config(rf24_dev_t* p_dev) {
+    p_dev->platform_setup.spi_timeout = DEFAULT_SPI_TIMEOUT_MS;
+    p_dev->payload_size = DEFAULT_PAYLOAD_SIZE;
+    p_dev->addr_width = DEFAULT_ADDRESS_SIZE;
+    p_dev->datarate = RF24_1MBPS;
+    p_dev->channel = DEFAULT_CHANNEL_MHZ;
+    
+    for (uint8_t i = 0; i < RF24_ADDRESS_MAX_SIZE; i++) {
+        p_dev->pipe0_reading_address[i] = 0;
+    }
+
+    return RF24_SUCCESS;
 }
 
 rf24_status_t rf24_init(rf24_dev_t* p_dev) {

@@ -20,6 +20,12 @@
 #include "rf24_platform.h"
 
 /*****************************************
+ * Public Constants
+ *****************************************/
+
+#define RF24_ADDRESS_MAX_SIZE 5
+
+/*****************************************
  * Public Types
  *****************************************/
 
@@ -70,7 +76,7 @@ typedef struct rf24_dev {
     rf24_datarate_t datarate;
     uint8_t         channel;
 
-    uint8_t         pipe0_reading_address[5];     /**< Last address set on pipe 0 for reading. */
+    uint8_t         pipe0_reading_address[RF24_ADDRESS_MAX_SIZE];     /**< Last address set on pipe 0 for reading. */
 } rf24_dev_t;
 
 /*****************************************
@@ -78,11 +84,13 @@ typedef struct rf24_dev {
  *****************************************/
 
 /**
- * @brief Returns default device configuration.
+ * @brief Applys default device configuration.
  *
- * @return Default configuration.
+ * @param p_dev Pointer to rf24 device.
+ *
+ * @return @ref rf24_status.
  */
-rf24_dev_t rf24_get_default_config(void);
+rf24_status_t rf24_get_default_config(rf24_dev_t* p_dev);
 
 /**
  * @brief Initilizes device.
