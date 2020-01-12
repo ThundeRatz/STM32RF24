@@ -302,6 +302,25 @@ rf24_status_t rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len);
 rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool enable_auto_ack);
 
 /**
+ * @brief Writes data in the transmission FIFO, data to be sent continuously to the receiver.
+ *
+ * @note Be sure to call @ref rf24_open_writing_pipe first to set the
+ *       destination of where to write to.
+ *
+ * @note Auto acknowledgement and auto retransmit will be disabled in this mode, make sure to
+ *       re-configure the device after using this function.
+ *
+ * @note Interruption flags related to the transmitter are NOT cleared.
+ *
+ * @param p_dev Pointer to rf24 device.
+ * @param buff Pointer to the data to be sent
+ * @param len Number of bytes to be sent
+ *
+ * @return @ref rf24_status.
+ */
+rf24_status_t rf24_write_continuously(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len);
+
+/**
  * @brief Gets status register value.
  *
  * @param p_dev Pointer to rf24 device.

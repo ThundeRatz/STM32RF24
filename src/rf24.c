@@ -29,7 +29,7 @@
 #define DEFAULT_ADDRESS_SIZE 5U
 #define DEFAULT_CHANNEL_MHZ 76U
 
-#define MAX_RETRANSMISSIONA 0xFU
+#define MAX_RETRANSMISSIONS 0xFU
 
 /**
  * @brief Number of retransmissions delay steps.
@@ -115,7 +115,7 @@ rf24_status_t rf24_init(rf24_dev_t* p_dev) {
     }
 
     if (dev_status == RF24_SUCCESS) {
-        dev_status = rf24_set_retries(p_dev, NUM_OF_RETRANSMISSIONS_DELAY_STEPS, MAX_RETRANSMISSIONA);
+        dev_status = rf24_set_retries(p_dev, NUM_OF_RETRANSMISSIONS_DELAY_STEPS, MAX_RETRANSMISSIONS);
     }
 
     if (dev_status == RF24_SUCCESS) {
@@ -667,6 +667,37 @@ rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool ena
     status_reg.tx_ds = 1;
     platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
     dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_INTERRUPT_NOT_CLEARED);
+
+    return dev_status;
+}
+
+rf24_status_t rf24_write_continuously(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len) {
+    rf24_status_t dev_status = RF24_SUCCESS;
+    rf24_platform_status_t platform_status = RF24_PLATFORM_SUCCESS;
+
+    nrf24l01_reg_status_t status_reg = rf24_get_status(p_dev);
+
+    if (status_reg.tx_full) {
+        return RF24_TX_FIFO_FULL;
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        dev_status = rf24_set_retries(p_dev, NUM_OF_RETRANSMISSIONS_DELAY_STEPS, 0);
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_write_payload(&(p_dev->platform_setup), buff, len, false);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        rf24_platform_enable(&(p_dev->platform_setup));
+    }
+
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_send_command(&(p_dev->platform_setup), NRF24L01_COMM_REUSE_TX_PL);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
     return dev_status;
 }
