@@ -89,7 +89,7 @@ rf24_status_t rf24_get_default_config(rf24_dev_t* p_dev) {
     p_dev->addr_width = DEFAULT_ADDRESS_SIZE;
     p_dev->datarate = RF24_1MBPS;
     p_dev->channel = DEFAULT_CHANNEL_MHZ;
-    
+
     for (uint8_t i = 0; i < RF24_ADDRESS_MAX_SIZE; i++) {
         p_dev->pipe0_reading_address[i] = 0;
     }
@@ -680,6 +680,45 @@ nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev) {
     }
 
     return status_reg;
+}
+
+rf24_status_t rf24_set_irq_configuration(rf24_dev_t* p_dev, rf24_irq_t irq_config) {
+    nrf24l01_reg_config_t config_reg;
+
+    rf24_platform_status_t platform_status =
+        rf24_platform_read_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, &(config_reg.value));
+
+    if (platform_status == RF24_PLATFORM_SUCCESS) {
+        config_reg.mask_max_rt = irq_config.max_retransmits;
+        config_reg.mask_tx_ds = irq_config.tx_data_sent;
+        config_reg.mask_rx_dr = irq_config.rx_data_ready;
+
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, config_reg.value);
+    }
+
+    return platform_status;
+}
+
+rf24_irq_t rf24_irq_callback(rf24_dev_t* p_dev) {
+    rf24_irq_t irq_values = {
+        .tx_data_sent = 0,
+        .rx_data_ready = 0,
+        .max_retransmits = 0,
+    };
+
+    nrf24l01_reg_status_t status_reg;
+    rf24_platform_status_t platform_status = rf24_platform_get_status(&(p_dev->platform_setup), &status_reg);
+
+    if (platform_status == RF24_PLATFORM_SUCCESS) {
+        irq_values.tx_data_sent = status_reg.tx_ds;
+        irq_values.rx_data_ready = status_reg.rx_dr;
+        irq_values.max_retransmits = status_reg.max_rt;
+
+        // Resets interruptions flags values
+        rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
+    }
+
+    return irq_values;
 }
 
 __weak rf24_status_t rf24_delay(uint32_t ms);

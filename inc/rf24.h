@@ -66,6 +66,15 @@ typedef enum rf24_datarate {
 } rf24_datarate_t;
 
 /**
+ * @brief Interruption request type.
+ */
+typedef struct rf24_irq {
+    uint8_t tx_data_sent : 1;
+    uint8_t rx_data_ready : 1;
+    uint8_t max_retransmits : 1;
+} rf24_irq_t;
+
+/**
  * @brief rf24 device type.
  */
 typedef struct rf24_dev {
@@ -302,6 +311,27 @@ rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool ena
  *              7 only allows 0, so 0xFF is an invalid value.
  */
 nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev);
+
+/**
+ * @brief Configurates wich interruptions will active the IRQ pin.
+ *
+ * @param p_dev Pointer to rf24 device.
+ * @param irq_config variable containing wich interruptions will active the IRQ pin.
+ *                   Write 1 to the respective struct member to active the interrupt.
+ *
+ * @return @ref rf24_status.
+ */
+rf24_status_t rf24_set_irq_configuration(rf24_dev_t* p_dev, rf24_irq_t irq_config);
+
+/**
+ * @brief Gets wich type of interruption activated the IRQ pin and resets it.
+ *
+ * @param p_dev Pointer to rf24 device.
+ *
+ * @return @ref rf24_irq_t. Each member of the struct indicate if
+ *         there was that kind of interruption (1) or not (0).
+ */
+rf24_irq_t rf24_irq_callback(rf24_dev_t* p_dev);
 
 /**
  * @brief Library delay function.
