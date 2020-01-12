@@ -1,13 +1,13 @@
 /**
  * @file rf24.h
  *
- * @brief nRF24L01 registers related.
+ * @brief nRF24L01 device related.
  *
  * @author Lucas Haug <lucas.haug@thunderatz.org>
  * @author Lucas Schneider <lucas.schneider@thunderatz.org>
  * @author Daniel Nery <daniel.nery@thunderatz.org>
  *
- * @date 10/2019
+ * @date 01/2020
  */
 
 #ifndef __RF24_H__
@@ -102,7 +102,7 @@ rf24_status_t rf24_get_default_config(rf24_dev_t* p_dev);
 rf24_status_t rf24_init(rf24_dev_t* p_dev);
 
 /**
- * @brief
+ * @brief Power up device.
  *
  * @param p_dev Pointer to rf24 device.
  *
@@ -111,7 +111,7 @@ rf24_status_t rf24_init(rf24_dev_t* p_dev);
 rf24_status_t rf24_power_up(rf24_dev_t* p_dev);
 
 /**
- * @brief
+ * @brief Power down device.
  *
  * @param p_dev Pointer to rf24 device.
  *
@@ -164,27 +164,27 @@ uint8_t rf24_get_channel(rf24_dev_t* p_dev);
 rf24_status_t rf24_set_retries(rf24_dev_t* p_dev, uint8_t delay_steps, uint8_t rt_count);
 
 /**
- * @brief
+ * @brief Set device data rate.
  *
  * @param p_dev    Pointer to rf24 device.
- * @param datarate
+ * @param datarate Selected data rate.
  *
  * @return @ref rf24_status.
  */
 rf24_status_t rf24_set_datarate(rf24_dev_t* p_dev, rf24_datarate_t datarate);
 
 /**
- * @brief
+ * @brief Set device output power.
  *
- * @param p_dev        Pointer to rf24 device.
- * @param output_power
+ * @param p_dev         Pointer to rf24 device.
+ * @param output_power  Selected output power.
  *
  * @return @ref rf24_status.
  */
 rf24_status_t rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t output_power);
 
 /**
- * @brief
+ * @brief Flushes receiver FIFO.
  *
  * @param p_dev Pointer to rf24 device.
  *
@@ -193,7 +193,7 @@ rf24_status_t rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t outpu
 rf24_status_t rf24_flush_rx(rf24_dev_t* p_dev);
 
 /**
- * @brief
+ * @brief Flushes transmiter FIFO.
  *
  * @param p_dev Pointer to rf24 device.
  *
@@ -202,38 +202,38 @@ rf24_status_t rf24_flush_rx(rf24_dev_t* p_dev);
 rf24_status_t rf24_flush_tx(rf24_dev_t* p_dev);
 
 /**
- * @brief
+ * @brief Enables the device transmition pipe.
  *
- * @param p_dev   Pointer to rf24 device.
- * @param address
+ * @param p_dev     Pointer to rf24 device.
+ * @param address   Transmitter pipe address.
  *
  * @return @ref rf24_status.
  */
 rf24_status_t rf24_open_writing_pipe(rf24_dev_t* p_dev, uint8_t* address);
 
 /**
- * @brief
+ * @brief Enables a receiver pipe.
  *
- * @param p_dev       Pointer to rf24 device.
- * @param pipe_number
- * @param address
+ * @param p_dev         Pointer to rf24 device.
+ * @param pipe_number   Number of the pipe to be enabled.
+ * @param address       Receiver pipe address.
  *
  * @return @ref rf24_status.
  */
 rf24_status_t rf24_open_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number, uint8_t* address);
 
 /**
- * @brief
+ * @brief Disables a receiver pipe.
  *
  * @param p_dev       Pointer to rf24 device.
- * @param pipe_number
+ * @param pipe_number Number of the pipe to be disabled
  *
  * @return @ref rf24_status.
  */
 rf24_status_t rf24_close_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number);
 
 /**
- * @brief
+ * @brief Configure the radio as primary receiver and enables it.
  *
  * @param p_dev Pointer to rf24 device.
  *
@@ -242,7 +242,7 @@ rf24_status_t rf24_close_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number);
 rf24_status_t rf24_start_listening(rf24_dev_t* p_dev);
 
 /**
- * @brief
+ * @brief Disables radio as primary receiver.
  *
  * @param p_dev Pointer to rf24 device.
  *
@@ -251,10 +251,10 @@ rf24_status_t rf24_start_listening(rf24_dev_t* p_dev);
 rf24_status_t rf24_stop_listening(rf24_dev_t* p_dev);
 
 /**
- * @brief
+ * @brief Checks if a new payload has arrived.
  *
- * @param p_dev       Pointer to rf24 device.
- * @param pipe_number
+ * @param p_dev         Pointer to rf24 device.
+ * @param pipe_number   Pipe where the available data is.
  *
  * @note To don't ready a pipe, pass NULL as pipe_number argument.
  *
@@ -263,22 +263,29 @@ rf24_status_t rf24_stop_listening(rf24_dev_t* p_dev);
 rf24_status_t rf24_available(rf24_dev_t* p_dev, uint8_t* pipe_number);
 
 /**
- * @brief
+ * @brief Reads the payload avaible in the receiver FIFO.
+ *
+ * @note Interruption flags related to the receiver are cleared.
  *
  * @param p_dev Pointer to rf24 device.
- * @param buff
- * @param len
+ * @param buff Pointer to a buffer where the data should be written
+ * @param len Maximum number of bytes to read into the buffer
  *
  * @return @ref rf24_status.
  */
 rf24_status_t rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len);
 
 /**
- * @brief
+ * @brief Writes data in the transmission FIFO, data to be sent to the receiver.
  *
- * @param p_dev           Pointer to rf24 device.
- * @param buff
- * @param len
+ * @note Be sure to call @ref rf24_open_writing_pipe first to set the
+ *       destination of where to write to.
+ *
+ * @note Interruption flags related to the transmitter are cleared.
+ *
+ * @param p_dev Pointer to rf24 device.
+ * @param buff Pointer to the data to be sent
+ * @param len Number of bytes to be sent
  * @param enable_auto_ack Whether auto acknowledgement is enabled or not.
  *
  * @return @ref rf24_status.

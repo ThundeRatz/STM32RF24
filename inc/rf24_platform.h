@@ -37,17 +37,17 @@ typedef enum rf24_platform_status {
  * @brief Platform hardware related.
  */
 typedef struct rf24_platform {
-    GPIO_TypeDef* csn_port;
-    uint16_t csn_pin;
+    GPIO_TypeDef*      csn_port;
+    uint16_t           csn_pin;
 
-    GPIO_TypeDef* ce_port;
-    uint16_t ce_pin;
+    GPIO_TypeDef*      ce_port;
+    uint16_t           ce_pin;
 
-    GPIO_TypeDef* irq_port;
-    uint16_t irq_pin;
+    GPIO_TypeDef*      irq_port;
+    uint16_t           irq_pin;
 
     SPI_HandleTypeDef* hspi;
-    uint16_t spi_timeout;
+    uint16_t           spi_timeout;
 } rf24_platform_t;
 
 /*****************************************
