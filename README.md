@@ -19,6 +19,8 @@
 - [📝 Documentação](#-documentação)
 - [🏗️ Estrutura do Código](#-estrutura-do-código)
 - [🔌 Configuração de Hardware](#-configuração-de-hardware)
+  - [🤔 Conhecendo o módulo](#-conhecendo-o-módulo)
+  - [🔧 Configurando o microcontrolador](#-configurando-o-microcontrolador)
 - [📚 Usando a biblioteca](#-usando-a-biblioteca)
 - [📝 Contribuindo](#-contribuindo)
 - [✨ Contribuidores](#-contribuidores)
@@ -119,6 +121,20 @@ O código está estruturado da seguinte forma:
 
 
 ## 🔌 Configuração de Hardware
+
+### 🤔 Conhecendo o módulo
+
+Para se fazer a configuração do seu hardware, é necessário primeiramente se analisar a pinagem do módulo nRF24L01, como pode ser vista abaixo:
+
+![nRF24L01 Pinout](./assets/img/nrf24l01_pinout.png)
+
+O módulo utiliza SPI (Serial Protocol Interface) para se comunicar com o microcontrolador (para saber mais sobre SPI, recomendo esse artigo [aqui](https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all) da Sparkfun), dessa forma são necessários quatro pinos para essa comunicação, o SCK, o MISO, o MOSI e o CSN. O CSN é um pino de GPIO, enquanto os outros são pinos dedicados.
+
+Além disso, é necessário um pino de GPIO conectado ao CE (Chip Enable), que é utilizado para se fazer o controle do módulo, possibilitando a trasição entre os estados da máquina de estados do módulo.
+
+O módulo também conta com um pino IRQ (Interruption Request), possibilitando o funcionamento do módulo por meio de interrupções, esse pino deve ser conectado em um pino que suporte interrupções no microcontrolador caso se queira fazer uso desse recurso, caso contrário, deve-se ligá-lo ao 3,3V, uma vez que o pino é ativo baixo.
+
+### 🔧 Configurando o microcontrolador
 
 
 ## 📚 Usando a biblioteca
