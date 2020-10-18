@@ -126,7 +126,7 @@ O código está estruturado da seguinte forma:
 
 Para se fazer a configuração do seu hardware, é necessário primeiramente se analisar a pinagem do módulo nRF24L01, como pode ser vista abaixo:
 
-![nRF24L01 Pinout](./assets/img/nrf24l01_pinout.png)
+![Pinagem do nRF24L01](./assets/img/nrf24l01_pinout.png)
 
 O módulo utiliza SPI (Serial Protocol Interface) para se comunicar com o microcontrolador (para saber mais sobre SPI, recomendo esse artigo [aqui](https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all) da Sparkfun), dessa forma são necessários quatro pinos para essa comunicação, o SCK, o MISO, o MOSI e o CSN. O CSN é um pino de GPIO, enquanto os outros são pinos dedicados.
 
@@ -135,6 +135,18 @@ Além disso, é necessário um pino de GPIO conectado ao CE (Chip Enable), que �
 O módulo também conta com um pino IRQ (Interruption Request), possibilitando o funcionamento do módulo por meio de interrupções, esse pino deve ser conectado em um pino que suporte interrupções no microcontrolador caso se queira fazer uso desse recurso, caso contrário, deve-se ligá-lo ao 3,3V, uma vez que o pino é ativo baixo.
 
 ### 🔧 Configurando o microcontrolador
+
+![Configurando o SPI - 1](./assets/img/spi_config_1.jpg)
+
+![Configurando o SPI - 2](./assets/img/spi_config_2.jpg)
+
+![Configurando o SPI - 3](./assets/img/spi_config_3.jpg)
+
+![Configurando o CE](./assets/img/ce_config.jpg)
+
+![Configurando o IRQ - 1](./assets/img/irq_config_1.jpg)
+
+![Configurando o IRQ - 2](./assets/img/irq_config_2.jpg)
 
 
 ## 📚 Usando a biblioteca
