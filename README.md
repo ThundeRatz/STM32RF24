@@ -27,7 +27,7 @@
 
 ## 🎉 Introdução
 
-Esse repositório contém uma biblioteca para lidar com o módulo de rádiofrequência nRF24L01 da Nordic Semiconductor, cujo datasheet pode ser visto [aqui](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf).
+Esse repositório contém uma biblioteca para lidar com o módulo de rádiofrequência nRF24L01 da Nordic Semiconductor, cujo datasheet pode ser visto [aqui](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), ao se utilizar os microcontroladores da família [STM32](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html).
 
 Essa biblioteca foi feita para ser utilizada como submódulo no [STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate).
 
@@ -136,18 +136,35 @@ O módulo também conta com um pino IRQ (Interruption Request), possibilitando o
 
 ### 🔧 Configurando o microcontrolador
 
+Para fazer a configuração do microcontrolador será utilizado o [STM32CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html), um dos requisitos do [STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate). Além disso, será necessário já se ter um projeto configurado no Cube, caso não tenha veja o [README do STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate#stm32-project-template) e para mais detalhes veja o [STM32Guide](https://github.com/ThundeRatz/STM32Guide).
+
+Com o projeto aberto, vá em _Connectivity_ e depois selecione um SPI disponível, como pode ser visto na imagem abaixo:
+
 ![Configurando o SPI - 1](./assets/img/spi_config_1.jpg)
+
+Ao fazer isso, se abrirá uma aba, onde se pode selecionar o modo do SPI, então selecione o modo _Full-Duplex Master_:
 
 ![Configurando o SPI - 2](./assets/img/spi_config_2.jpg)
 
+Com isso, como pode ser visto abaixo em "1", alguns pinos serão definidos automaticamente em algumas posições, porém é possível movê-los para outras caso estejam disponíveis. Para ver outras posições disponíveis, segure o botão _Ctrl_ e clique no pino que deseja mover, caso haja um outro pino que suporte a função do pino que deseja mover, a cor do alternativo irá se alterar.
+
+Além disso, aparecerá um tela de configurção, na qual será necessário fazer algumas alterações. Como pode ser visto na página 45, item 8.1 do [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), o módulo trabalha com uma interface serial SPI de 4 cabos de 0Mbps a 8Mbps e comandos de 8 bits. Portanto, como pode ser visto abaixo em "2", deve-se definir o _Data Size_ como 8 bits e em "3" deve-se definir um valor de _Prescaler_ de forma a se obter um _Baud Rate_ de até 8Mbps.
+
 ![Configurando o SPI - 3](./assets/img/spi_config_3.jpg)
+
+Depois disso será necessário configurar o pino CE, para isso, clique no pino que deseja utilizar para essa função e depois selecione a opção _GPIO_Output_, como pode ser visto na imagem:
 
 ![Configurando o CE](./assets/img/ce_config.jpg)
 
+Por fim, para configurar o pino IRQ, clique no pino que deseja utilizar e selecione a opção _GPIO_EXTIx_, onde x depende do número do pino escolhido.  Abaixo foi utilizado o pino PC7 como exemplo, tendo-se assim que escolher o _GPIO_EXTI7_:
+
 ![Configurando o IRQ - 1](./assets/img/irq_config_1.jpg)
+
+Como o pino IRQ é ativo baixo, é necessário configurá-lo assim. Para isso, como pode ser visto abaixo, vá em _System Core_ > _GPIO_, então na aba de configuração de GPIO selecione seu pino IRQ, com isso aparecerá uma lista de configurações do pino, na qual, em _GPIO Mode_ deve se escolher o modo _External Interrupt Mode with Falling edge trigger detection_.
 
 ![Configurando o IRQ - 2](./assets/img/irq_config_2.jpg)
 
+Com todas as configurações feitas, salve o projeto e feche-o. Para gerar as arquivos do Cube, siga as instruções no [README do STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate#gerando-arquivos).
 
 ## 📚 Usando a biblioteca
 
