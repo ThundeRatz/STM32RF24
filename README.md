@@ -13,8 +13,8 @@
 - [🎉 Introdução](#-introdução)
 - [➕ Requisitos](#-requisitos)
 - [📦 Submódulos com Git](#-submódulos-com-git)
-    - [💥 Adicionando um submódulo](#-adicionando-um-submódulo)
-    - [✅ Inicializando um submódulo já existente](#-inicializando-um-submódulo-já-existente)
+  - [💥 Adicionando um submódulo](#-adicionando-um-submódulo)
+  - [✅ Inicializando um submódulo já existente](#-inicializando-um-submódulo-já-existente)
 - [📁 Estrutura do Repositório](#-estrutura-do-repositório)
 - [📝 Documentação](#-documentação)
 - [🏗️ Estrutura do Código](#-estrutura-do-código)
@@ -22,6 +22,9 @@
   - [🤔 Conhecendo o módulo](#-conhecendo-o-módulo)
   - [🔧 Configurando o microcontrolador](#-configurando-o-microcontrolador)
 - [📚 Usando a biblioteca](#-usando-a-biblioteca)
+  - [🏁 Inicializando](#-inicializando)
+  - [✉️ Utilizando como transmissor](#-utilizando-como-transmissor)
+  - [📩 Utilizando como receptor](#-utilizando-como-receptor)
 - [📝 Contribuindo](#-contribuindo)
 - [✨ Contribuidores](#-contribuidores)
 
@@ -168,6 +171,17 @@ Com todas as configurações feitas, salve o projeto e feche-o. Para gerar as ar
 
 ## 📚 Usando a biblioteca
 
+A biblioteca possui diferentes funções para configurar parâmetros do módulo, receber e transmitir de formas diferentes, nessa seção se mostrará uma forma básica de se inicializar o módulo, utilizá-lo como receptor ou como transmissor.
+
+A comunicação entre dois módulos pode acontecer com _acknowledgment_ (ACK) ou sem. Utilizar ACK ajuda a evitar a perda de pacotes enviados. Ao se habilitar o ACK, o seu receptor, ao receber um pacote válido, enviará para o transmissor um pacote de ACK, caso contrário não enviará nada. Por sua vez, o transmissor, após enviar um pacote, ficará esperando receber um pacote de ACK por um determinado tempo, caso contrário enviará novamente o pacote que tinha enviado. Vários diagramas de transação diferentes podem ser vistos a partir da página 40, item 7.9 do [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf).
+
+Aqui se mostrará como fazer a comunicação dos módulos com ACK.
+
+### 🏁 Inicializando
+
+### ✉️ Utilizando como transmissor
+
+### 📩 Utilizando como receptor
 
 ## 📝 Contribuindo
 
