@@ -171,11 +171,34 @@ Com todas as configurações feitas, salve o projeto e feche-o. Para gerar as ar
 
 ## 📚 Usando a biblioteca
 
-A biblioteca possui diferentes funções para configurar parâmetros do módulo, receber e transmitir de formas diferentes, nessa seção se mostrará uma forma básica de se inicializar o módulo, utilizá-lo como receptor ou como transmissor.
+A biblioteca possui diferentes funções para configurar parâmetros do módulo, receber e transmitir de formas diferentes. Nessa seção se mostrará uma forma básica de se inicializar o módulo, utilizá-lo como receptor ou como transmissor.
 
-A comunicação entre dois módulos pode acontecer com _acknowledgment_ (ACK) ou sem. Utilizar ACK ajuda a evitar a perda de pacotes enviados. Ao se habilitar o ACK, o seu receptor, ao receber um pacote válido, enviará para o transmissor um pacote de ACK, caso contrário não enviará nada. Por sua vez, o transmissor, após enviar um pacote, ficará esperando receber um pacote de ACK por um determinado tempo, caso contrário enviará novamente o pacote que tinha enviado. Vários diagramas de transação diferentes podem ser vistos a partir da página 40, item 7.9 do [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf).
+A comunicação entre dois módulos pode acontecer com _acknowledgment_ (ACK) ou sem. Utilizar ACK ajuda a evitar a perda de pacotes enviados. Ao se habilitar o ACK, o seu receptor, ao receber um pacote válido, enviará para o transmissor um pacote de ACK, caso contrário não enviará nada. Por sua vez, o transmissor, após enviar um pacote, ficará esperando receber um pacote de ACK por um determinado tempo, caso o tempo se esgote sem receber o ACK, ele enviará novamente o pacote que tinha enviado. Vários diagramas de transação diferentes podem ser vistos a partir da página 40, item 7.9 do [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf). Nesse tutorial se mostrará como fazer a comunicação dos módulos com ACK.
 
-Aqui se mostrará como fazer a comunicação dos módulos com ACK.
+Além do que será mostrado nas subseções abaixo, para o  funcionamento da biblioteca é necessário, em um dos seus arquivos `.c` que inclui o arquivo `rf24.h`, definir a seguinte função:
+
+```C
+/**
+ * @brief Library delay function.
+ *
+ * @note This function must be implemented by the user.
+ *
+ * @param ms Delay in miliseconds.
+ *
+ * @return @ref rf24_status.
+ */
+rf24_status_t rf24_delay(uint32_t ms);
+```
+
+Ela é uma função de _delay_ utilizada dentro da biblioteca que recebe um tempo em milissegundos. Ela pode ser definida de formas distintas, porém, em geral, é possível defini-la simplesmente com a função `HAL_Delay(uint32_t Delay)` (é necessário incluir o arquivo `main.h` gerado pelo Cube para isso):
+
+```C
+rf24_status_t rf24_delay(uint32_t ms) {
+    HAL_Delay(ms);
+
+    return RF24_SUCCESS;
+}
+```
 
 ### 🏁 Inicializando
 
