@@ -25,7 +25,7 @@
   - [🏁 Inicializando](#-inicializando)
   - [✉️ Utilizando como transmissor](#-utilizando-como-transmissor)
   - [📩 Utilizando como receptor](#-utilizando-como-receptor)
-- [📝 Contribuindo](#-contribuindo)
+- [👥 Contribuindo](#-contribuindo)
 - [✨ Contribuidores](#-contribuidores)
 
 ## 🎉 Introdução
@@ -183,7 +183,7 @@ Aqui se mostrará como fazer a comunicação dos módulos com ACK.
 
 ### 📩 Utilizando como receptor
 
-## 📝 Contribuindo
+## 👥 Contribuindo
 
 Toda a ajuda no desenvolvimento da robótica é bem-vinda, nós lhe encorajamos a contribuir para o projeto! Para saber como fazer, veja as diretrizes de contribuição [aqui](CONTRIBUTING.pt-br.md).
 
