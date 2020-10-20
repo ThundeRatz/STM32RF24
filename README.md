@@ -30,7 +30,7 @@
 
 ## 🎉 Introdução
 
-Esse repositório contém uma biblioteca para lidar com o módulo de rádiofrequência nRF24L01 da Nordic Semiconductor, cujo datasheet pode ser visto [aqui](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), ao se utilizar os microcontroladores da família [STM32](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html).
+Esse repositório contém uma biblioteca para lidar com o módulo de radiofrequência nRF24L01 da Nordic Semiconductor, cujo datasheet pode ser visto [aqui](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), ao se utilizar os microcontroladores da família [STM32](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html).
 
 Essa biblioteca foi feita para ser utilizada como submódulo no [STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate).
 
@@ -133,7 +133,7 @@ Para se fazer a configuração do seu hardware, é necessário primeiramente se 
 
 O módulo utiliza SPI (Serial Protocol Interface) para se comunicar com o microcontrolador (para saber mais sobre SPI, recomendo esse artigo [aqui](https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all) da Sparkfun), dessa forma são necessários quatro pinos para essa comunicação, o SCK, o MISO, o MOSI e o CSN. O CSN é um pino de GPIO, enquanto os outros são pinos dedicados.
 
-Além disso, é necessário um pino de GPIO conectado ao CE (Chip Enable), que é utilizado para se fazer o controle do módulo, possibilitando a trasição entre os estados da máquina de estados do módulo.
+Além disso, é necessário um pino de GPIO conectado ao CE (Chip Enable), que é utilizado para se fazer o controle do módulo, possibilitando a transição entre os estados da máquina de estados do módulo.
 
 O módulo também conta com um pino IRQ (Interruption Request), possibilitando o funcionamento do módulo por meio de interrupções, esse pino deve ser conectado em um pino que suporte interrupções no microcontrolador caso se queira fazer uso desse recurso, caso contrário, deve-se ligá-lo ao 3,3V, uma vez que o pino é ativo baixo.
 
@@ -151,7 +151,7 @@ Ao fazer isso, se abrirá uma aba, onde se pode selecionar o modo do SPI, então
 
 Com isso, como pode ser visto abaixo em "1", alguns pinos serão definidos automaticamente em algumas posições, porém é possível movê-los para outras caso estejam disponíveis. Para ver outras posições disponíveis, segure o botão _Ctrl_ e clique no pino que deseja mover, caso haja um outro pino que suporte a função do pino que deseja mover, a cor do alternativo irá se alterar.
 
-Além disso, aparecerá um tela de configurção, na qual será necessário fazer algumas alterações. Como pode ser visto na página 45, item 8.1 do [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), o módulo trabalha com uma interface serial SPI de 4 cabos de 0Mbps a 8Mbps e comandos de 8 bits. Portanto, como pode ser visto abaixo em "2", deve-se definir o _Data Size_ como 8 bits e em "3" deve-se definir um valor de _Prescaler_ de forma a se obter um _Baud Rate_ de até 8Mbps.
+Além disso, aparecerá um tela de configuração, na qual será necessário fazer algumas alterações. Como pode ser visto na página 45, item 8.1 do [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), o módulo trabalha com uma interface serial SPI de 4 cabos de 0Mbps a 8Mbps e comandos de 8 bits. Portanto, como pode ser visto abaixo em "2", deve-se definir o _Data Size_ como 8 bits e em "3" deve-se definir um valor de _Prescaler_ de forma a se obter um _Baud Rate_ de até 8Mbps.
 
 ![Configurando o SPI - 3](./assets/img/spi_config_3.jpg)
 
