@@ -251,7 +251,7 @@ Por fim, é possível se inicializar o módulo, passando o ponteiro da instânci
 rf24_init(p_dev);
 ```
 
-Essa função irá retornar `RF24_SUCCESS` caso a inicialização seja bem sucedida e valores de erros caso contrário. Para mais detalhes sobre os possíveis valores de erro, veja a documentação do código.
+Essa função irá retornar `RF24_SUCCESS` caso a inicialização seja bem sucedida e valores de erro caso contrário. Para mais detalhes sobre os possíveis valores de erro, veja a documentação do código.
 
 ### ✉️ Utilizando como transmissor
 
