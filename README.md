@@ -155,7 +155,7 @@ Além disso, aparecerá um tela de configuração, na qual será necessário faz
 
 ![Configurando o SPI - 3](./assets/img/spi_config_3.jpg)
 
-Depois disso será necessário configurar o pino CE, para isso, clique no pino que deseja utilizar para essa função e depois selecione a opção _GPIO_Output_, como pode ser visto na imagem:
+Depois disso será necessário configurar o pino CSN, para isso, clique no pino que deseja utilizar para essa função e depois selecione a opção _GPIO_Output_, como pode ser visto na imagem abaixo (para esse tutorial o CSN ficará no pino PC6). Deve-se fazer o mesmo para o pino CE, uma vez que ele também é um _GPIO_Output_ (para esse tutorial o CSN ficará no pino PC8)
 
 ![Configurando o CE](./assets/img/ce_config.jpg)
 
