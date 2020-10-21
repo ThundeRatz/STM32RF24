@@ -202,6 +202,57 @@ rf24_status_t rf24_delay(uint32_t ms) {
 
 ### 🏁 Inicializando
 
+Antes de se incializar o módulo em si, é necessário se inicializar o SPI que foi configurado no Cube. O nome da função depende de qual SPI se escolheu, para o escolhido na seção de [🔌 Configuração de Hardware](#-configuração-de-hardware) acima, seria a seguinte função:
+
+```C
+MX_SPI2_Init(); /* No Cube foi escolhido o SPI2 */
+```
+
+Para utilizar a função acima precisa-se incluir o arquivo `spi.h` gerado pelo Cube. Além disso, é recomendado se colocar um delay de algo em torno de 100 ms após a inicialização do SPI.
+
+Depois, é necessário se definir no código quais foram os pinos e a instância do SPI escolhidos, além de outras configurações. Para isso irá se considerar os pinos escolhidos na seção de [🔌 Configuração de Hardware](#-configuração-de-hardware) e também que se mandará uma mensagem de 7 bytes, ou seja _payload size_ de 7.
+
+Primeiramente se precisa criar uma instância de módulo e um ponteiro para ele:
+
+```C
+rf24_dev_t device; /* Instanciação de um módulo */
+rf24_dev_t* p_dev = &device; /* Ponteiro para a instância do módulo */
+```
+
+Então para se configurar o módulo pode-se fazer da seguinte forma:
+
+```C
+/* Device config */
+
+/* Obtém-se uma configuraão padrão */
+rf24_get_default_config(p_dev);
+
+/* No Cube foi escolhido o SPI2 */
+p_dev->platform_setup.hspi = &hspi2;
+
+/* CSN no pino PC6 */
+p_dev->platform_setup.csn_port = GPIOC;
+p_dev->platform_setup.csn_pin = GPIO_PIN_6;
+
+/* IRQ no pino PC7 */
+p_dev->platform_setup.irq_port = GPIOC;
+p_dev->platform_setup.irq_pin = GPIO_PIN_7;
+
+/* CE no pino PC8 */
+p_dev->platform_setup.ce_port = GPIOC;
+p_dev->platform_setup.ce_pin = GPIO_PIN_8;
+
+p_dev->payload_size = 7;
+```
+
+Por fim, é possível se inicializar o módulo, passando o ponteiro da instância do módulo para a seguinte função:
+
+```C
+rf24_init(p_dev);
+```
+
+Essa função irá retornar `RF24_SUCCESS` caso a inicialização seja bem sucedida e valores de erros caso contrário. Para mais detalhes sobre os possíveis valores de erro, veja a documentação do código.
+
 ### ✉️ Utilizando como transmissor
 
 ### 📩 Utilizando como receptor
