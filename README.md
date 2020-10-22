@@ -210,7 +210,7 @@ MX_SPI2_Init(); /* No Cube foi escolhido o SPI2 */
 
 Para utilizar a função acima precisa-se incluir o arquivo `spi.h` gerado pelo Cube. Além disso, é recomendado se colocar um delay de algo em torno de 100 ms após a inicialização do SPI.
 
-Depois, é necessário se definir no código quais foram os pinos e a instância do SPI escolhidos, além de outras configurações. Para isso irá se considerar os pinos escolhidos na seção de [🔌 Configuração de Hardware](#-configuração-de-hardware) e também que se mandará uma mensagem de 7 bytes, ou seja _payload size_ de 7.
+Depois, é necessário se definir no código quais foram os pinos e a instância do SPI escolhidos, além de outras configurações. Para isso irá se considerar os pinos escolhidos na seção de [🔌 Configuração de Hardware](#-configuração-de-hardware) e também que se mandará uma mensagem de 15 bytes, ou seja _payload size_ de 15.
 
 Primeiramente se precisa criar uma instância de módulo e um ponteiro para ele:
 
@@ -242,7 +242,7 @@ p_dev->platform_setup.irq_pin = GPIO_PIN_7;
 p_dev->platform_setup.ce_port = GPIOC;
 p_dev->platform_setup.ce_pin = GPIO_PIN_8;
 
-p_dev->payload_size = 7;
+p_dev->payload_size = 15;
 ```
 
 Por fim, é possível se inicializar o módulo, passando o ponteiro da instância do módulo para a seguinte função:
@@ -254,6 +254,45 @@ rf24_init(p_dev);
 Essa função irá retornar `RF24_SUCCESS` caso a inicialização seja bem sucedida e valores de erro caso contrário. Para mais detalhes sobre os possíveis valores de erro, veja a documentação do código.
 
 ### ✉️ Utilizando como transmissor
+
+Para se utilizar um módulo como transmissor é necessário saber o endereço do receptor para o qual se enviará a mensagem, essa informação precisa ser compartilhada entre os dois, caso contrário não é possível fazer a comunicação. Além disso, como aqui será mostrado como se comunicar com ACK, o transmissor se comportará por um período como receptor esperando o pacote de ACK, dessa forma também é necessário que ele tenha um endereço de receptor, esse endereço também precisa ser uma informação que os dois módulos têm.
+
+Para tanto o exemplo de transmissor quanto o de receptor será usado o vetor de endereços abaixo, onde o primeiro é o endereço para o transmissor receber o pacote de ACK e o segundo o endereço do receptor, para onde o transmissor irá enviar. Os tamanhos dos endereços são configuráveis, porém se utilizará endereços de 5 bytes.
+
+```C
+uint8_t addresses[2][5] = {{0xE7, 0xE7, 0xE7, 0xE7, 0xE8}, {0xC2, 0xC2, 0xC2, 0xC2, 0xC1}};
+```
+
+Para a parte de configuração do transmissor também é interessante se escolher uma potência de saída do módulo com a seguinte função:
+
+```C
+rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t output_power);
+```
+
+Agora, para se receber e enviar de acordo com os endereços certos, é necessário se abrir um _pipe_ de escrita para o endereço `addresses[1]` e um de leitura para o `addresses[0]`, o que pode ser feito da seguinte forma:
+
+```C
+rf24_status_t device_status;
+
+device_status = rf24_open_writing_pipe(p_dev, addresses[1]);
+device_status = rf24_open_reading_pipe(p_dev, 1, addresses[0]);
+```
+
+Com isso feito, já pe possível se enviar mensagens! Digamos que se deseje enviar a seguinte mensagem armazenada em um vetor:
+
+```C
+uint8_t buffer[] = {'V', 'i', 'r', 't', 'u', 'a', 'l', ' ', 'h', 'u', 'g', 's', '!', '\r', '\n'};
+```
+
+Para mandá-la com ACK, pode-se fazzer da seguinte forma:
+
+```C
+rf24_status_t device_status;
+
+device_status = rf24_write(p_dev, buffer, 15, true);
+```
+
+Essa função retornará `RF24_SUCCESS` caso o transmissor tenha conseguido enviar a mensagem e, como a comunicação é feita com ACK, caso o receptor tenha recebido a mensagem.
 
 ### 📩 Utilizando como receptor
 
