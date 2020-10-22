@@ -266,13 +266,21 @@ uint8_t addresses[2][5] = {{0xE7, 0xE7, 0xE7, 0xE7, 0xE8}, {0xC2, 0xC2, 0xC2, 0x
 Para a parte de configuração do transmissor também é interessante se escolher uma potência de saída do módulo com a seguinte função:
 
 ```C
-rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t output_power);
+/**
+ * @brief Set device output power.
+ *
+ * @param p_dev         Pointer to rf24 device.
+ * @param output_power  Selected output power.
+ *
+ * @return @ref rf24_status.
+ */
+rf24_status_t rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t output_power);
 ```
 
 Agora, para se receber e enviar de acordo com os endereços certos, é necessário se abrir um _pipe_ de escrita para o endereço `addresses[1]` e um de leitura para o `addresses[0]`, o que pode ser feito da seguinte forma:
 
 ```C
-rf24_status_t device_status;
+rf24_status_t device_status; /* Variável para receber os status retornados pelas funções */
 
 device_status = rf24_open_writing_pipe(p_dev, addresses[1]);
 device_status = rf24_open_reading_pipe(p_dev, 1, addresses[0]);
@@ -287,14 +295,83 @@ uint8_t buffer[] = {'V', 'i', 'r', 't', 'u', 'a', 'l', ' ', 'h', 'u', 'g', 's', 
 Para mandá-la com ACK, pode-se fazzer da seguinte forma:
 
 ```C
-rf24_status_t device_status;
-
 device_status = rf24_write(p_dev, buffer, 15, true);
 ```
 
 Essa função retornará `RF24_SUCCESS` caso o transmissor tenha conseguido enviar a mensagem e, como a comunicação é feita com ACK, caso o receptor tenha recebido a mensagem.
 
 ### 📩 Utilizando como receptor
+
+Assim como foi falado na [subseção do transmissor]((#-utilizando-como-transmissor)), o endereço para o qual o transmissor enviará os dados precisa ser o mesmo que está registrado no código do receptor, assim como o endereço para o qual o receptor enviará o pacote de ACK precisa ser o mesmo que está no transmissor, por isso, serão usados os mesmos endereços do tutorial do transmissor:
+
+```C
+uint8_t addresses[2][5] = {{0xE7, 0xE7, 0xE7, 0xE7, 0xE8}, {0xC2, 0xC2, 0xC2, 0xC2, 0xC1}};
+```
+
+No caso do receptor, para se receber e enviar de acordo com os endereços certos, é necessário se abrir um _pipe_ de escrita para o endereço `addresses[0]` e um de leitura para o `addresses[1]`, como é feito abaixo:
+
+```C
+rf24_status_t device_status; /* Variável para receber os status retornados pelas funções */
+
+device_status = rf24_open_writing_pipe(p_dev, addresses[0]);
+device_status = rf24_open_reading_pipe(p_dev, 1, addresses[1]);
+```
+
+Além disso, para que o receptor possa começar a receber pacotes, é necessário chamar a seguinte função:
+
+```C
+device_status = rf24_start_listening(p_dev);
+```
+
+Com isso, já é possível receber pacotes! É possível verificar se há um pacote novo com a seguinte fução:
+
+```C
+/**
+ * @brief Checks if a new payload has arrived.
+ *
+ * @param p_dev         Pointer to rf24 device.
+ * @param pipe_number   Pipe where the available data is.
+ *
+ * @note To don't ready a pipe, pass NULL as pipe_number argument.
+ *
+ * @return @ref rf24_status.
+ */
+rf24_status_t rf24_available(rf24_dev_t* p_dev, uint8_t* pipe_number);
+```
+
+E é possível ler pacotes com a seguinte função:
+
+```C
+/**
+ * @brief Reads the payload avaible in the receiver FIFO.
+ *
+ * @note Interruption flags related to the receiver are cleared.
+ *
+ * @param p_dev Pointer to rf24 device.
+ * @param buff Pointer to a buffer where the data should be written
+ * @param len Maximum number of bytes to read into the buffer
+ *
+ * @return @ref rf24_status.
+ */
+rf24_status_t rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len);
+```
+
+Portanto, para se verificar se há pacotes na fila e ler o último pacote, pode-se fazer da seguinte forma:
+
+```C
+rf24_status_t device_status;
+rf24_status_t read_status;
+
+uint8_t buffer[15] = {0};
+
+if ((device_status = rf24_available(p_dev, NULL)) == RF24_SUCCESS) {
+    while ((device_status = rf24_available(p_dev, NULL)) == RF24_SUCCESS) {
+        read_status = rf24_read(p_dev, buffer, p_dev->payload_size);
+    }
+
+    /* Faça alguma coisa com o pacote lido */
+}
+```
 
 ## 👥 Contribuindo
 
