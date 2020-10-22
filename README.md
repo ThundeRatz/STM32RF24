@@ -99,7 +99,7 @@ O repositório contém as seguintes pastas:
 - **inc/** → Arquivos de cabeçalho
 - **src/** → Arquivos de código fonte
 
-Na raiz do repositório, além dos arquivos que contém o código de conduta, diretrizes de contribuição, README e licensa, há o arquivo `sources.mk`, que é responsável por possibilitar com que os arquivos da biblioteca sejam encontrados quando se compila o código. Também há um `Doxyfile` para gerar a documentação.
+Na raiz do repositório, além dos arquivos que contém o código de conduta, diretrizes de contribuição, README e licença, há o arquivo `sources.mk`, que é responsável por possibilitar com que os arquivos da biblioteca sejam encontrados quando se compila o código. Também há um `Doxyfile` para gerar a documentação.
 
 
 ## 📝 Documentação
@@ -202,7 +202,7 @@ rf24_status_t rf24_delay(uint32_t ms) {
 
 ### 🏁 Inicializando
 
-Antes de se incializar o módulo em si, é necessário se inicializar o SPI que foi configurado no Cube. O nome da função depende de qual SPI se escolheu, para o escolhido na seção de [🔌 Configuração de Hardware](#-configuração-de-hardware) acima, seria a seguinte função:
+Antes de se inicializar o módulo em si, é necessário se inicializar o SPI que foi configurado no Cube. O nome da função depende de qual SPI se escolheu, para o escolhido na seção de [🔌 Configuração de Hardware](#-configuração-de-hardware) acima, seria a seguinte função:
 
 ```C
 MX_SPI2_Init(); /* No Cube foi escolhido o SPI2 */
@@ -224,7 +224,7 @@ Então para se configurar o módulo pode-se fazer da seguinte forma:
 ```C
 /* Device config */
 
-/* Obtém-se uma configuraão padrão */
+/* Obtém-se uma configuração padrão */
 rf24_get_default_config(p_dev);
 
 /* No Cube foi escolhido o SPI2 */
@@ -286,13 +286,13 @@ device_status = rf24_open_writing_pipe(p_dev, addresses[1]);
 device_status = rf24_open_reading_pipe(p_dev, 1, addresses[0]);
 ```
 
-Com isso feito, já pe possível se enviar mensagens! Digamos que se deseje enviar a seguinte mensagem armazenada em um vetor:
+Com isso feito, já é possível se enviar mensagens! Digamos que se deseje enviar a seguinte mensagem armazenada em um vetor:
 
 ```C
 uint8_t buffer[] = {'V', 'i', 'r', 't', 'u', 'a', 'l', ' ', 'h', 'u', 'g', 's', '!', '\r', '\n'};
 ```
 
-Para mandá-la com ACK, pode-se fazzer da seguinte forma:
+Para mandá-la com ACK, pode-se fazer da seguinte forma:
 
 ```C
 device_status = rf24_write(p_dev, buffer, 15, true);
@@ -323,7 +323,7 @@ Além disso, para que o receptor possa começar a receber pacotes, é necessári
 device_status = rf24_start_listening(p_dev);
 ```
 
-Com isso, já é possível receber pacotes! É possível verificar se há um pacote novo com a seguinte fução:
+Com isso, já é possível receber pacotes! É possível verificar se há um pacote novo com a seguinte função:
 
 ```C
 /**
