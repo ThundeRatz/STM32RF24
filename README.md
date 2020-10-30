@@ -17,6 +17,7 @@
   - [✅ Inicializando um submódulo já existente](#-inicializando-um-submódulo-já-existente)
 - [📁 Estrutura do Repositório](#-estrutura-do-repositório)
 - [📝 Documentação](#-documentação)
+- [🎨 Formatação](#-formatação)
 - [🏗️ Estrutura do Código](#-estrutura-do-código)
 - [🔌 Configuração de Hardware](#-configuração-de-hardware)
   - [🤔 Conhecendo o módulo](#-conhecendo-o-módulo)
@@ -47,6 +48,14 @@ sudo apt install doxygen
 ```
 
 Para outros sistemas operacionais é possível ver opções de download na [página oficial do Doxygen](https://www.doxygen.nl/download.html).
+
+Além disso, para formatação é utilizado o `uncrustify`, como descrito na seção [🎨 Formatação](#-formatação). Para instalá-lo, no Ubuntu, rode o seguinte comando no terminal:
+
+```bash
+sudo apt install uncrustify
+```
+
+No Windows, baixe o .zip no [SourceForge](https://sourceforge.net/projects/uncrustify/files/). Adicione o local do executável na variável de ambiente `PATH`.
 
 
 ## 📦 Submódulos com Git
@@ -100,7 +109,7 @@ O repositório contém as seguintes pastas:
 - **inc/** → Arquivos de cabeçalho
 - **src/** → Arquivos de código fonte
 
-Na raiz do repositório, além dos arquivos que contém o código de conduta, diretrizes de contribuição, README e licença, há o arquivo `sources.mk`, que é responsável por possibilitar com que os arquivos da biblioteca sejam encontrados quando se compila o código. Também há um `Doxyfile` para gerar a documentação.
+Na raiz do repositório, além dos arquivos que contém o código de conduta, diretrizes de contribuição, README e licença, há o arquivo `sources.mk`, que é responsável por possibilitar com que os arquivos da biblioteca sejam encontrados quando se compila o código. Também há um `Doxyfile` para gerar a documentação. Outro arquivo relevante é o `uncrustify.cfg` que é utilizado para formatar os arquivos.
 
 
 ## 📝 Documentação
@@ -113,6 +122,13 @@ doxygen
 
 As configurações estão no arquivo [Doxyfile](./Doxyfile).
 
+## 🎨 Formatação
+
+Além de uma boa documentação, é necessário que o código sempre esteja bem formatado, o que facilita sua compreensão. Para isso foi utilizado o `uncrustify`. Com o `uncrustify` instalado, para formatar um arquivo que tenha mudado, rode o seguinte comando:
+
+```bash
+uncrustify -c uncrustify.cfg --replace --no-backup caminho/até/o/arquivo
+```
 
 ## 🏗️ Estrutura do Código
 
