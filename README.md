@@ -25,6 +25,7 @@
   - [🏁 Inicializando](#-inicializando)
   - [✉️ Utilizando como transmissor](#-utilizando-como-transmissor)
   - [📩 Utilizando como receptor](#-utilizando-como-receptor)
+  - [🐛 Depuração](#-depuração)
 - [👥 Contribuindo](#-contribuindo)
 - [✨ Contribuidores](#-contribuidores)
 
@@ -371,6 +372,14 @@ if ((device_status = rf24_available(p_dev, NULL)) == RF24_SUCCESS) {
 
     /* Faça alguma coisa com o pacote lido */
 }
+```
+
+### 🐛 Depuração
+
+Para depurar o seu código é possível utilizar as funções do `rf24_debug.c/.h`, porém para isso também é necessário definir uma função `printf`. Para facilitar o uso, recomendo adicionar a biblioteca [SEGGER_RTT](https://github.com/ThundeRatz/SEGGER_RTT) ao projeto. Após adicioná-la, tendo chamado as funções de depuração em seu código, para ver o que está sendo "impresso" pelas funções, rode no terminal, estando na raiz de seu projeto:
+
+```C
+make rtt
 ```
 
 ## 👥 Contribuindo
