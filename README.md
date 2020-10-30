@@ -127,7 +127,7 @@ As configurações estão no arquivo [Doxyfile](./Doxyfile).
 Além de uma boa documentação, é necessário que o código sempre esteja bem formatado, o que facilita sua compreensão. Para isso foi utilizado o `uncrustify`. Com o `uncrustify` instalado, para formatar um arquivo que tenha mudado, rode o seguinte comando:
 
 ```bash
-uncrustify -c uncrustify.cfg --replace --no-backup caminho/até/o/arquivo
+uncrustify -c uncrustify.cfg --replace --no-backup caminho_até_o_arquivo/nome_do_arquivo
 ```
 
 ## 🏗️ Estrutura do Código
