@@ -23,7 +23,7 @@
   - [🔧 Configurando o microcontrolador](#-configurando-o-microcontrolador)
 - [📚 Usando a biblioteca](#-usando-a-biblioteca)
   - [🏁 Inicializando](#-inicializando)
-  - [✉️ Utilizando como transmissor](#-utilizando-como-transmissor)
+  - [📤 Utilizando como transmissor](#-utilizando-como-transmissor)
   - [📩 Utilizando como receptor](#-utilizando-como-receptor)
   - [🐛 Depuração](#-depuração)
 - [👥 Contribuindo](#-contribuindo)
@@ -254,7 +254,7 @@ rf24_init(p_dev);
 
 Essa função irá retornar `RF24_SUCCESS` caso a inicialização seja bem sucedida e valores de erro caso contrário. Para mais detalhes sobre os possíveis valores de erro, veja a documentação do código.
 
-### ✉️ Utilizando como transmissor
+### 📤 Utilizando como transmissor
 
 Para se utilizar um módulo como transmissor é necessário saber o endereço do receptor para o qual se enviará a mensagem, essa informação precisa ser compartilhada entre os dois, caso contrário não é possível fazer a comunicação. Além disso, como aqui será mostrado como se comunicar com ACK, o transmissor se comportará por um período como receptor esperando o pacote de ACK, dessa forma também é necessário que ele tenha um endereço de receptor, esse endereço também precisa ser uma informação que os dois módulos têm.
 
