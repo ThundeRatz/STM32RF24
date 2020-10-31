@@ -151,6 +151,8 @@ rf24_status_t rf24_set_channel(rf24_dev_t* p_dev, uint8_t ch);
  * @param p_dev Pointer to rf24 device.
  *
  * @return Channel value.
+ * @retval 0xFF Returns 0xFF when got an error, because
+ *         channel value can't be bigger than 125.
  */
 uint8_t rf24_get_channel(rf24_dev_t* p_dev);
 

@@ -55,6 +55,20 @@
  */
 #define MAX_NUM_OF_PIPES 6
 
+/**
+ * @brief Error value for status register.
+ *
+ * @note Bit 7 only allows 0, so 0xFF represents an erro value.
+ */
+#define STATUS_REG_ERROR_VALUE 0xFF
+
+/**
+ * @brief Error value for channel.
+ *
+ * @note The max channel value is 125, so 0xFF represents an erro value.
+ */
+#define CHANNEL_ERROR_VALUE 0xFF
+
 /*****************************************
  * Private Macros
  *****************************************/
@@ -256,7 +270,7 @@ uint8_t rf24_get_channel(rf24_dev_t* p_dev) {
     dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
     if (dev_status != RF24_SUCCESS) {
-        return 0xFF;  // Invalid value, meaning error
+        return CHANNEL_ERROR_VALUE;
     }
 
     return reg.rf_ch;
@@ -716,7 +730,7 @@ nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev) {
     rf24_platform_status_t platform_status = rf24_platform_get_status(&(p_dev->platform_setup), &status_reg);
 
     if (platform_status != RF24_PLATFORM_SUCCESS) {
-        status_reg.value = 0xFF;  // Bit 7 only allows 0, so 0xFF represents an erro value.
+        status_reg.value = STATUS_REG_ERROR_VALUE;
     }
 
     return status_reg;
