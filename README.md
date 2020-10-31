@@ -34,7 +34,7 @@ Para a versão em PT-BR 🇧🇷 desse documento, [veja aqui](./README.pt-br.md)
 
 ## 🎉 Intro
 
-This repository contains a library to handle Nordic Semiconductor's radio frequency module nRF24L01, whose datasheet can be viewed [here](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), when using the microcontrollers of the [STM32] family [STM32](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html).
+This repository contains a library to handle Nordic Semiconductor's radio frequency module nRF24L01, whose datasheet can be viewed [here](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), when using the microcontrollers of the [STM32](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html) family.
 
 This library was made to be used as a submodule in the [STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate).
 
