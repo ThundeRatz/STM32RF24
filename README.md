@@ -8,6 +8,8 @@
 
 # 📡 STM32RF24
 
+Para a versão em PT-BR 🇧🇷 desse documento, [veja aqui](./README.pt-br.md)
+
 ## 📜 Index
 
 - [🎉 Intro](#-intro)
@@ -32,167 +34,164 @@
 
 ## 🎉 Intro
 
-Esse repositório contém uma biblioteca para lidar com o módulo de radiofrequência nRF24L01 da Nordic Semiconductor, cujo datasheet pode ser visto [aqui](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), ao se utilizar os microcontroladores da família [STM32](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html).
+This repository contains a library to handle Nordic Semiconductor's radio frequency module nRF24L01, whose datasheet can be viewed [here](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), when using the microcontrollers of the [STM32] family [STM32](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html).
 
-Essa biblioteca foi feita para ser utilizada como submódulo no [STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate).
+This library was made to be used as a submodule in the [STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate).
 
 
 ## ➕ Requirements
 
-Essa biblioteca não requer, para funcionar, nenhum requisito extra, além dos já listados [requisitos do STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate#requisitos).
+This library does not require any extra requirements to function, in addition to those already listed [STM32ProjectTemplate requirements](https://github.com/ThundeRatz/STM32ProjectTemplate#requisitos).
 
-Porém, caso se deseje gerar a documentação, como descrito na seção [📝 Documentação](#-documentação), é necessário instalar o Doxygen. No Ubuntu é possível instalá-lo com o seguinte comando:
+However, if you want to generate the documentation, as described in the section [📝 Documentation](#-documentation), it is necessary to install Doxygen. In Ubuntu it is possible to install it with the following command:
 
 ```bash
 sudo apt install doxygen
 ```
 
-Para outros sistemas operacionais é possível ver opções de download na [página oficial do Doxygen](https://www.doxygen.nl/download.html).
+For other operating systems, you can see download options on the [official Doxygen page](https://www.doxygen.nl/download.html).
 
-Além disso, para formatação é utilizado o `uncrustify`, como descrito na seção [🎨 Formatação](#-formatação). Para instalá-lo, no Ubuntu, rode o seguinte comando no terminal:
+Besides that, for formatting `uncrustify` is used, as described in the section [🎨 Formatting](#-formatting). To install it, on Ubuntu, run the following command on the terminal:
 
 ```bash
 sudo apt install uncrustify
 ```
 
-No Windows, baixe o .zip no [SourceForge](https://sourceforge.net/projects/uncrustify/files/). Adicione o local do executável na variável de ambiente `PATH`.
+On Windows, download the .zip from [SourceForge](https://sourceforge.net/projects/uncrustify/files/). Add the location of the executable in the `PATH` environment variable.
 
 
 ## 📦 Adding a submodule
 
-Como dito, essa biblioteca funciona como um submódulo. Dessa forma se facilita escolher a versão da biblioteca que será utilizada no projeto, permitindo também o desenvolvimento em paralelo da biblioteca.
+As stated, this library functions as a submodule. In this way, it is easier to choose the version of the library that will be used in the project, also allowing its development in parallel.
 
 ### 💥 Adding a submodule
 
-Crie um diretório chamado `lib`, caso não exista:
+Create a directory called `lib`, if it does not exist:
 
 ```bash
 mkdir lib
 ```
 
-E adicione o submódulo fazendo:
+And add the submodule by doing:
 
-* Com HTTPS:
+* With HTTPS:
 ```bash
 git submodule add --name STM32RF24 https://github.com/ThundeRatz/STM32RF24.git lib/STM32RF24
 ```
 
-* Com SSH:
+* With SSH:
 ```bash
 git submodule add --name STM32RF24 git@github.com:ThundeRatz/STM32RF24.git lib/STM32RF24
 ```
 
 ### ✅ Initializing a existing submodule
 
-Ao clonar um repositório que já tenha submódulos, é necessário clonar os repositórios desse submódulo. Isso pode ser feito de duas formas, clonando junto com o repositório do projeto ou depois de já ter clonado.
+When cloning a repository that already has submodules, it is necessary to clone the repositories of that submodule. This can be done in two ways, by cloning together with the project repository or after you have already cloned.
 
-Exemplo:
+Example:
 
-Para se clonar junto, rode o seguinte comando, trocando para o link do repositório do seu projeto:
+To clone together, run the following command, switching to the repository link of your project:
 
 ```bash
 git clone --recurse-submodules git@github.com:ThundeRatz/STM32ProjectTemplate.git
 ```
 
-Para se clonar depois de já ter clonado o repositório do projeto, dentro dele, deve-se fazer:
+To clone having already cloned the project repository, within it, you should do:
 
 ```bash
 git submodule update --init
 ```
 
-
 ## 📁 Repository Structure
 
-O repositório contém as seguintes pastas:
+The repository contains the following folders:
 
-- **docs/** → Arquivos de documentação
-- **inc/** → Arquivos de cabeçalho
-- **src/** → Arquivos de código fonte
+- **docs/** → Documentation files
+- **inc/** → Header files
+- **src/** → Source files
 
-Na raiz do repositório, além dos arquivos que contém o código de conduta, diretrizes de contribuição, README e licença, há o arquivo `sources.mk`, que é responsável por possibilitar com que os arquivos da biblioteca sejam encontrados quando se compila o código. Também há um `Doxyfile` para gerar a documentação. Outro arquivo relevante é o `uncrustify.cfg` que é utilizado para formatar os arquivos.
-
+At the root of the repository, in addition to the files containing the code of conduct, contribution guidelines, README and license, there is the `sources.mk` file, which is responsible for making it possible for the library files to be found when compiling the code. There is also a `Doxyfile` to generate the documentation. Another relevant file is `uncrustify.cfg` which is used to format the files.
 
 ## 📝 Documentation
 
-Essa biblioteca é documentada usando Doxygen. Para gera a documentação, rode o seguinte comando estando na raiz do seu repositório:
+This library is documented using Doxygen. To generate the documentation, run the following command at the root of your repository:
 
 ```bash
 doxygen
 ```
 
-As configurações estão no arquivo [Doxyfile](./Doxyfile).
+The settings are in the file [Doxyfile](./Doxyfile).
 
 ## 🎨 Formatting
 
-Além de uma boa documentação, é necessário que o código sempre esteja bem formatado, o que facilita sua compreensão. Para isso foi utilizado o `uncrustify`. Com o `uncrustify` instalado, para formatar um arquivo que tenha mudado, rode o seguinte comando:
+Besides a good documentation, it is necessary that the code is always well formatted, which facilitates its understanding. For that, `uncrustify` was used. With `uncrustify` installed, to format a file that has changed, run the following command:
 
 ```bash
-uncrustify -c uncrustify.cfg --replace --no-backup caminho_até_o_arquivo/nome_do_arquivo
+uncrustify -c uncrustify.cfg --replace --no-backup path_to_file/file_name
 ```
 
 ## 🏗️ Code Structure
 
-O código está estruturado da seguinte forma:
+The code is structured as follows:
 
-- `nrf24l01_registers.h` → tipos e constantes relacionados aos registradores do módulo.
-- `rf24_platform.c/.h` → tipos e funções de mais baixo nível que utilizam o HAL.
-- `rf24.c/.h` → tipos e funções de mais alto nível para utilização do usuário.
-- `rf24_debug.c/.h` → funções úteis para se validar o funcionamento do módulo.
-
+- `nrf24l01_registers.h` → types and constants related to the module registers.
+- `rf24_platform.c/.h` → lower-level types and functions that use HAL.
+- `rf24.c/.h` → highest level types and functions for user use.
+- `rf24_debug.c/.h` → useful functions to validate the module's operation.
 
 ## 🔌 Hardware Configuration
 
 ### 🤔 Getting to know the module
 
-Para se fazer a configuração do seu hardware, é necessário primeiramente se analisar a pinagem do módulo nRF24L01, como pode ser vista abaixo:
+To configure your hardware, you must first analyze the pinout of the nRF24L01 module, as shown below:
 
-![Pinagem do nRF24L01](./assets/img/nrf24l01_pinout.png)
+![nRF24L01 Module's Pinout](./assets/img/nrf24l01_pinout.png)
 
-O módulo utiliza SPI (Serial Protocol Interface) para se comunicar com o microcontrolador (para saber mais sobre SPI, recomendo esse artigo [aqui](https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all) da Sparkfun), dessa forma são necessários quatro pinos para essa comunicação, o SCK, o MISO, o MOSI e o CSN. O CSN é um pino de GPIO, enquanto os outros são pinos dedicados.
+The module uses SPI (Serial Protocol Interface) to communicate with the microcontroller (to learn more about SPI, I recommend this article [here](https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all) from Sparkfun), so four pins are required for this communication, SCK, MISO, MOSI and CSN. The CSN is a GPIO pin, while the others are dedicated pins.
 
-Além disso, é necessário um pino de GPIO conectado ao CE (Chip Enable), que é utilizado para se fazer o controle do módulo, possibilitando a transição entre os estados da máquina de estados do módulo.
+In addition, a GPIO pin connected to the CE (Chip Enable) is needed, which is used to control the module, enabling the transition between the states of the module's finite state machine.
 
-O módulo também conta com um pino IRQ (Interruption Request), possibilitando o funcionamento do módulo por meio de interrupções, esse pino deve ser conectado em um pino que suporte interrupções no microcontrolador caso se queira fazer uso desse recurso, caso contrário, deve-se ligá-lo ao 3,3V, uma vez que o pino é ativo baixo.
+The module also has an IRQ (Interruption Request) pin, allowing the module to function through interruptions. This pin must be connected to a pin that supports interruptions in the microcontroller if you want to use this feature, otherwise, you must connect it to the 3.3V, since the pin is active low.
 
 ### 🔧 Configuring the microcontroller
 
-Para fazer a configuração do microcontrolador será utilizado o [STM32CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html), um dos requisitos do [STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate). Além disso, será necessário já se ter um projeto configurado no Cube, caso não tenha veja o [README do STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate#stm32-project-template) e para mais detalhes veja o [STM32Guide](https://github.com/ThundeRatz/STM32Guide).
+To configure the microcontroller, the [STM32CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html), one of the requirements of the [STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate), will be used. Besides that, it will be necessary to have a project configured in Cube, if you don't have it, see the [STM32ProjectTemplate README](https://github.com/ThundeRatz/STM32ProjectTemplate#stm32-project-template) and for more details see the [STM32Guide](https://github.com/ThundeRatz/STM32Guide).
 
-Com o projeto aberto, vá em _Connectivity_ e depois selecione um SPI disponível, como pode ser visto na imagem abaixo:
+With the project open, go to _Connectivity_ and then select an available SPI, as seen in the image below:
 
-![Configurando o SPI - 1](./assets/img/spi_config_1.jpg)
+![Configuring the SPI - 1](./assets/img/spi_config_1.jpg)
 
-Ao fazer isso, se abrirá uma aba, onde se pode selecionar o modo do SPI, então selecione o modo _Full-Duplex Master_:
+After doing this, a tab will open, where you can select the SPI mode, then select the _Full-Duplex Master_ mode:
 
-![Configurando o SPI - 2](./assets/img/spi_config_2.jpg)
+![Configuring the SPI - 2](./assets/img/spi_config_2.jpg)
 
-Com isso, como pode ser visto abaixo em "1", alguns pinos serão definidos automaticamente em algumas posições, porém é possível movê-los para outras caso estejam disponíveis. Para ver outras posições disponíveis, segure o botão _Ctrl_ e clique no pino que deseja mover, caso haja um outro pino que suporte a função do pino que deseja mover, a cor do alternativo irá se alterar.
+Than, as can be seen below in "1", some pins will be automatically set in some positions, but it is possible to move them to others if they are available. To see other available positions, hold the _Ctrl_ button and click on the pin you want to move, if there is another pin that supports the function of the pin you want to move, the color of the alternative one will change.
 
-Além disso, aparecerá um tela de configuração, na qual será necessário fazer algumas alterações. Como pode ser visto na página 45, item 8.1 do [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), o módulo trabalha com uma interface serial SPI de 4 cabos de 0Mbps a 8Mbps e comandos de 8 bits. Portanto, como pode ser visto abaixo em "2", deve-se definir o _Data Size_ como 8 bits e em "3" deve-se definir um valor de _Prescaler_ de forma a se obter um _Baud Rate_ de até 8Mbps.
+A configuration screen will also appear, in which you will need to make some changes. As can be seen on page 45, item 8.1 of the [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), the module works with a 4-wire SPI serial interface from 0Mbps to 8Mbps and 8-bit commands. Therefore, as can be seen below in "2", the _Data Size_ must be set to 8 bits and in "3" a value of _Prescaler_ must be defined in order to obtain a _Baud Rate_ of up to 8Mbps.
 
-![Configurando o SPI - 3](./assets/img/spi_config_3.jpg)
+![Configuring the SPI - 3](./assets/img/spi_config_3.jpg)
 
-Depois disso será necessário configurar o pino CSN, para isso, clique no pino que deseja utilizar para essa função e depois selecione a opção _GPIO_Output_, como pode ser visto na imagem abaixo (para esse tutorial o CSN ficará no pino PC6). Deve-se fazer o mesmo para o pino CE, uma vez que ele também é um _GPIO_Output_ (para esse tutorial o CSN ficará no pino PC8)
+After that it will be necessary to configure the CSN pin, for that, click on the pin you want to use for this function and then select the _GPIO_Output_ option, as seen in the image below (for this tutorial the CSN will be on the PC6 pin). The same should be done for the CE pin, since it is also a _GPIO_Output_ (for this tutorial the CSN will be on the PC8 pin).
 
-![Configurando o CE](./assets/img/ce_config.jpg)
+![Configuring the CE](./assets/img/ce_config.jpg)
 
-Por fim, para configurar o pino IRQ, clique no pino que deseja utilizar e selecione a opção _GPIO_EXTIx_, onde x depende do número do pino escolhido.  Abaixo foi utilizado o pino PC7 como exemplo, tendo-se assim que escolher o _GPIO_EXTI7_:
+Finally, to configure the IRQ pin, click on the pin you want to use and select the _GPIO_EXTIx_ option, where x depends on the chosen pin number. Below, the PC7 pin was used as an example, so having to choose _GPIO_EXTI7_:
 
-![Configurando o IRQ - 1](./assets/img/irq_config_1.jpg)
+![Configuring the IRQ - 1](./assets/img/irq_config_1.jpg)
 
-Como o pino IRQ é ativo baixo, é necessário configurá-lo assim. Para isso, como pode ser visto abaixo, vá em _System Core_ > _GPIO_, então na aba de configuração de GPIO selecione seu pino IRQ, com isso aparecerá uma lista de configurações do pino, na qual, em _GPIO Mode_ deve se escolher o modo _External Interrupt Mode with Falling edge trigger detection_.
+Since the IRQ pin is active low, it is necessary to configure it like this. For this, as seen below, go to _System Core_> _GPIO_, then in the GPIO configuration tab select your IRQ pin, than a pin configurations list will appear, in which, in _GPIO Mode_, select _External mode must be chosen. Interrupt Mode with Falling edge trigger detection_.
 
-![Configurando o IRQ - 2](./assets/img/irq_config_2.jpg)
+![Configuring the IRQ - 2](./assets/img/irq_config_2.jpg)
 
-Com todas as configurações feitas, salve o projeto e feche-o. Para gerar as arquivos do Cube, siga as instruções no [README do STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate#gerando-arquivos).
+After setting everything, save the project and close it. To generate the Cube files, follow the instructions in the [STM32ProjectTemplate README](https://github.com/ThundeRatz/STM32ProjectTemplate#gerando-arquivos).
 
 ## 📚 Using the library
 
-A biblioteca possui diferentes funções para configurar parâmetros do módulo, receber e transmitir de formas diferentes. Nessa seção se mostrará uma forma básica de se inicializar o módulo, utilizá-lo como receptor ou como transmissor.
+The library has different functions for configuring module parameters, receiving and transmitting in different ways. This section will show a basic way to initialize the module, use it as a receiver or as a transmitter.
 
-A comunicação entre dois módulos pode acontecer com _acknowledgment_ (ACK) ou sem. Utilizar ACK ajuda a evitar a perda de pacotes enviados. Ao se habilitar o ACK, o seu receptor, ao receber um pacote válido, enviará para o transmissor um pacote de ACK, caso contrário não enviará nada. Por sua vez, o transmissor, após enviar um pacote, ficará esperando receber um pacote de ACK por um determinado tempo, caso o tempo se esgote sem receber o ACK, ele enviará novamente o pacote que tinha enviado. Vários diagramas de transação diferentes podem ser vistos a partir da página 40, item 7.9 do [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf). Nesse tutorial se mostrará como fazer a comunicação dos módulos com ACK, também se considerará que só há um transmissor e um receptor, porém é possível haver mais módulos.
+The communication between two modules can be with or without _acknowledgment_ (ACK). Using ACK helps to prevent the loss of packets sent. When ACK is enabled, your receiver, upon receiving a valid package, will send an ACK package to the transmitter, otherwise it will not send anything. On the other hand, the transmitter, after sending a packet, will be waiting to receive an ACK packet for a certain time, if the time runs out without receiving the ACK, it will send the packet it had sent again. Several different transaction diagrams can be seen starting on page 40, item 7.9 of the [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf). This tutorial will show you how to communicate two modules with ACK, it will also be considered that there is only one transmitter and one receiver, but it is possible to have more modules.
 
-Além do que será mostrado nas subseções abaixo, para o  funcionamento da biblioteca é necessário, em um dos seus arquivos `.c` que inclui o arquivo `rf24.h`, definir a seguinte função:
+In addition to what will be shown in the subsections below, for the library to function, it is necessary, in one of its `.c` files that includes the` rf24.h` file, to define the following function:
 
 ```C
 /**
@@ -207,7 +206,7 @@ Além do que será mostrado nas subseções abaixo, para o  funcionamento da bib
 rf24_status_t rf24_delay(uint32_t ms);
 ```
 
-Ela é uma função de _delay_ utilizada dentro da biblioteca que recebe um tempo em milissegundos. Ela pode ser definida de formas distintas, porém, em geral, é possível defini-la simplesmente com a função `HAL_Delay(uint32_t Delay)` (é necessário incluir o arquivo `main.h` gerado pelo Cube para isso):
+It is a _delay_ function used within the library, wich receives a time in milliseconds. It can be defined in different ways, however, in general, it is possible to define it simply with the `HAL_Delay(uint32_t Delay)` function (it is necessary to include the `main.h` file generated by Cube for this):
 
 ```C
 rf24_status_t rf24_delay(uint32_t ms) {
@@ -219,68 +218,68 @@ rf24_status_t rf24_delay(uint32_t ms) {
 
 ### 🏁 Initializing
 
-Antes de se inicializar o módulo em si, é necessário se inicializar o SPI que foi configurado no Cube. O nome da função depende de qual SPI se escolheu, para o escolhido na seção de [🔌 Configuração de Hardware](#-configuração-de-hardware) acima, seria a seguinte função:
+Before starting the module itself, it is necessary to initialize the SPI that was configured in the Cube. The function name depends on which SPI was chosen, for the one chosen in the [🔌 Hardware Configuration](#-hardware-configuration) section above, it would be the following function:
 
 ```C
-MX_SPI2_Init(); /* No Cube foi escolhido o SPI2 */
+MX_SPI2_Init(); /* The SPI2 was choosen in Cube */
 ```
 
-Para utilizar a função acima precisa-se incluir o arquivo `spi.h` gerado pelo Cube. Além disso, é recomendado se colocar um delay de algo em torno de 100 ms após a inicialização do SPI.
+To use the above function, it is necessary to include the file `spi.h` generated by Cube. In addition, it is recommended to put a delay of something around 100 ms after the SPI initialization.
 
-Depois, é necessário se definir no código quais foram os pinos e a instância do SPI escolhidos, além de outras configurações. Para isso irá se considerar os pinos escolhidos na seção de [🔌 Configuração de Hardware](#-configuração-de-hardware) e também que se mandará uma mensagem de 15 bytes, ou seja _payload size_ de 15.
+Then, it is necessary to define in the code which pins and SPI instance were chosen, in addition to other configurations. For this, the pins chosen in the [🔌 Hardware Configuration](#-hardware-configuration) section will be considered and also that a 15-byte message will be sent, that is, _payload size_ of 15.
 
-Primeiramente se precisa criar uma instância de módulo e um ponteiro para ele:
+First, you need to create a module instance and a pointer to it:
 
 ```C
-rf24_dev_t device; /* Instanciação de um módulo */
-rf24_dev_t* p_dev = &device; /* Ponteiro para a instância do módulo */
+rf24_dev_t device; /* Module instance */
+rf24_dev_t* p_dev = &device; /* Pointer to module instance */
 ```
 
-Então para se configurar o módulo pode-se fazer da seguinte forma:
+Then, to configure the module, it can be done as follows:
 
 ```C
 /* Device config */
 
-/* Obtém-se uma configuração padrão */
+/* Get default configuration */
 rf24_get_default_config(p_dev);
 
-/* No Cube foi escolhido o SPI2 */
+/* The SPI2 was choosen in Cube */
 p_dev->platform_setup.hspi = &hspi2;
 
-/* CSN no pino PC6 */
+/* CSN on pin PC6 */
 p_dev->platform_setup.csn_port = GPIOC;
 p_dev->platform_setup.csn_pin = GPIO_PIN_6;
 
-/* IRQ no pino PC7 */
+/* IRQ on pin PC7 */
 p_dev->platform_setup.irq_port = GPIOC;
 p_dev->platform_setup.irq_pin = GPIO_PIN_7;
 
-/* CE no pino PC8 */
+/* CE on pin PC8 */
 p_dev->platform_setup.ce_port = GPIOC;
 p_dev->platform_setup.ce_pin = GPIO_PIN_8;
 
 p_dev->payload_size = 15;
 ```
 
-Por fim, é possível se inicializar o módulo, passando o ponteiro da instância do módulo para a seguinte função:
+Finally, it is possible to initialize the module, passing the pointer of the module instance to the following function:
 
 ```C
 rf24_init(p_dev);
 ```
 
-Essa função irá retornar `RF24_SUCCESS` caso a inicialização seja bem sucedida e valores de erro caso contrário. Para mais detalhes sobre os possíveis valores de erro, veja a documentação do código.
+This function will return `RF24_SUCCESS` if initialization is successful and error values otherwise. For more details on the possible error values, see the code documentation.
 
 ### 📤 Using as a transmitter
 
-Para se utilizar um módulo como transmissor é necessário saber o endereço do receptor para o qual se enviará a mensagem, essa informação precisa ser compartilhada entre os dois, caso contrário não é possível fazer a comunicação. Além disso, como aqui será mostrado como se comunicar com ACK, o transmissor se comportará por um período como receptor esperando o pacote de ACK, dessa forma também é necessário que ele tenha um endereço de receptor, esse endereço também precisa ser uma informação que os dois módulos têm.
+To use a module as a transmitter it is necessary to know the address of the receiver to which the message will be sent, this information needs to be shared between the two, otherwise it is not possible to make the communication. In addition, as it will be shown here how to communicate with ACK, the transmitter will behave for a period as a receiver waiting for the ACK packet, so it is also necessary that it has a receiver address, this address must also be a information that two modules have.
 
-Para tanto o exemplo de transmissor quanto o de receptor será usado o vetor de endereços abaixo, onde o primeiro é o endereço para o transmissor receber o pacote de ACK e o segundo o endereço do receptor, para onde o transmissor irá enviar. Os tamanhos dos endereços são configuráveis, porém se utilizará endereços de 5 bytes.
+For both the example of transmitter and receiver, the address vector below will be used, where the first is the address for the transmitter to receive the ACK packet and the second is the address of the receiver, to which the transmitter will send. Address sizes are configurable, but 5-byte addresses will be used.
 
 ```C
 uint8_t addresses[2][5] = {{0xE7, 0xE7, 0xE7, 0xE7, 0xE8}, {0xC2, 0xC2, 0xC2, 0xC2, 0xC1}};
 ```
 
-Para a parte de configuração do transmissor também é interessante se escolher uma potência de saída do módulo com a seguinte função:
+For the configuration part of the transmitter it is also interesting to choose the output power of the module with the following function:
 
 ```C
 /**
@@ -294,53 +293,53 @@ Para a parte de configuração do transmissor também é interessante se escolhe
 rf24_status_t rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t output_power);
 ```
 
-Agora, para se receber e enviar de acordo com os endereços certos, é necessário se abrir um _pipe_ de escrita para o endereço `addresses[1]` e um de leitura para o `addresses[0]`, o que pode ser feito da seguinte forma:
+Now, to receive and send according to the right addresses, it is necessary to open a writing _pipe_ for the address `addresses[1]` and a reading _pipe_ for `addresses[0]`, which can be done as follows:
 
 ```C
-rf24_status_t device_status; /* Variável para receber os status retornados pelas funções */
+rf24_status_t device_status; /* Variable to receive the statuses returned by the functions */
 
 device_status = rf24_open_writing_pipe(p_dev, addresses[1]);
 device_status = rf24_open_reading_pipe(p_dev, 1, addresses[0]);
 ```
 
-Com isso feito, já é possível se enviar mensagens! Digamos que se deseje enviar a seguinte mensagem armazenada em um vetor:
+With that done, it's now possible to send messages! Say you want to send the following message stored in a vector:
 
 ```C
 uint8_t buffer[] = {'V', 'i', 'r', 't', 'u', 'a', 'l', ' ', 'h', 'u', 'g', 's', '!', '\r', '\n'};
 ```
 
-Para mandá-la com ACK, pode-se fazer da seguinte forma:
+To send it with ACK, it can be done as follows:
 
 ```C
 device_status = rf24_write(p_dev, buffer, 15, true);
 ```
 
-Essa função retornará `RF24_SUCCESS` caso o transmissor tenha conseguido enviar a mensagem e, como a comunicação é feita com ACK, caso o receptor tenha recebido a mensagem.
+This function will return `RF24_SUCCESS` if the transmitter was able to send the message and, as the communication is done with ACK, if the receiver has received the message.
 
 ### 📩 Using as a receiver
 
-Assim como foi falado na [subseção do transmissor]((#-utilizando-como-transmissor)), o endereço para o qual o transmissor enviará os dados precisa ser o mesmo que está registrado no código do receptor, assim como o endereço para o qual o receptor enviará o pacote de ACK precisa ser o mesmo que está no transmissor, por isso, serão usados os mesmos endereços do tutorial do transmissor:
+As mentioned in [transmitter's subsection](#-using-as-a-transmitter), the address to which the transmitter will send the data must be the same as that registered in the receiver's code, as well as the address to which the receiver will send the ACK packet needs to be the same as the one on the transmitter, so the same addresses as the transmitter tutorial will be used:
 
 ```C
 uint8_t addresses[2][5] = {{0xE7, 0xE7, 0xE7, 0xE7, 0xE8}, {0xC2, 0xC2, 0xC2, 0xC2, 0xC1}};
 ```
 
-No caso do receptor, para se receber e enviar de acordo com os endereços certos, é necessário se abrir um _pipe_ de escrita para o endereço `addresses[0]` e um de leitura para o `addresses[1]`, como é feito abaixo:
+In the case of the receiver, to receive and send according to the right addresses, it is necessary to open a writing _pipe_ for the address `addresses[0]` and a reading _pipe_ for `addresses[1]`, as is done below:
 
 ```C
-rf24_status_t device_status; /* Variável para receber os status retornados pelas funções */
+rf24_status_t device_status; /* Variable to receive the statuses returned by the functions */
 
 device_status = rf24_open_writing_pipe(p_dev, addresses[0]);
 device_status = rf24_open_reading_pipe(p_dev, 1, addresses[1]);
 ```
 
-Além disso, para que o receptor possa começar a receber pacotes, é necessário chamar a seguinte função:
+Besides that, in order for the receiver to start receiving packets, it is necessary to call the following function:
 
 ```C
 device_status = rf24_start_listening(p_dev);
 ```
 
-Com isso, já é possível receber pacotes! É possível verificar se há um pacote novo com a seguinte função:
+After that, it is already possible to receive packages! It is possible to check for a new package with the following function:
 
 ```C
 /**
@@ -356,7 +355,7 @@ Com isso, já é possível receber pacotes! É possível verificar se há um pac
 rf24_status_t rf24_available(rf24_dev_t* p_dev, uint8_t* pipe_number);
 ```
 
-E é possível ler pacotes com a seguinte função:
+And it is possible to read packages with the following function:
 
 ```C
 /**
@@ -373,7 +372,7 @@ E é possível ler pacotes com a seguinte função:
 rf24_status_t rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len);
 ```
 
-Portanto, para se verificar se há pacotes na fila e ler o último pacote, pode-se fazer da seguinte forma:
+So, to check for packages in the queue and read the last package, you can do it as follows:
 
 ```C
 rf24_status_t device_status;
@@ -386,13 +385,13 @@ if ((device_status = rf24_available(p_dev, NULL)) == RF24_SUCCESS) {
         read_status = rf24_read(p_dev, buffer, p_dev->payload_size);
     }
 
-    /* Faça alguma coisa com o pacote lido */
+    /* Do something with the read package */
 }
 ```
 
 ### 🐛 Debugging
 
-Para depurar o seu código é possível utilizar as funções do `rf24_debug.c/.h`, porém para isso também é necessário definir uma função `printf`. Para facilitar o uso, recomendo adicionar a biblioteca [SEGGER_RTT](https://github.com/ThundeRatz/SEGGER_RTT) ao projeto. Após adicioná-la, tendo chamado as funções de depuração em seu código, para ver o que está sendo "impresso" pelas funções, rode no terminal, estando na raiz de seu projeto:
+To debug your code it is possible to use the functions of the file `rf24_debug.c/.h`, but for this it is also necessary to define a `printf` function. For ease of use, I recommend adding the [SEGGER_RTT](https://github.com/ThundeRatz/SEGGER_RTT) to the project. After adding it, having called the debugging functions in your code, to see what is being "printed" by the functions, run in the terminal, being at the root of your project:
 
 ```C
 make rtt
