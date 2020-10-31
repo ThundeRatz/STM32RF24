@@ -56,7 +56,7 @@ A few recomendations:
 
 ## Styleguide 💄
 
-### Formatação do código
+### Code formatting
 
 The code is formatted following specific rules, for more information on how to ensure that your code is formatted correctly, see the [🎨 Formatting](./README.md#-formatting) section on the README.
 
