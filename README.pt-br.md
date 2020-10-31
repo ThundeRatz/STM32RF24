@@ -60,7 +60,7 @@ No Windows, baixe o .zip no [SourceForge](https://sourceforge.net/projects/uncru
 
 ## 📦 Submódulos com Git
 
-Como dito, essa biblioteca funciona como um submódulo. Dessa forma se facilita escolher a versão da biblioteca que será utilizada no projeto, permitindo também o desenvolvimento em paralelo da biblioteca.
+Como dito, essa biblioteca funciona como um submódulo. Dessa forma se facilita escolher a versão da biblioteca que será utilizada no projeto, permitindo também o desenvolvimento em paralelo dela.
 
 ### 💥 Adicionando um submódulo
 
@@ -172,7 +172,7 @@ Além disso, aparecerá um tela de configuração, na qual será necessário faz
 
 ![Configurando o SPI - 3](./assets/img/spi_config_3.jpg)
 
-Depois disso será necessário configurar o pino CSN, para isso, clique no pino que deseja utilizar para essa função e depois selecione a opção _GPIO_Output_, como pode ser visto na imagem abaixo (para esse tutorial o CSN ficará no pino PC6). Deve-se fazer o mesmo para o pino CE, uma vez que ele também é um _GPIO_Output_ (para esse tutorial o CSN ficará no pino PC8)
+Depois disso será necessário configurar o pino CSN, para isso, clique no pino que deseja utilizar para essa função e depois selecione a opção _GPIO_Output_, como pode ser visto na imagem abaixo (para esse tutorial o CSN ficará no pino PC6). Deve-se fazer o mesmo para o pino CE, uma vez que ele também é um _GPIO_Output_ (para esse tutorial o CSN ficará no pino PC8).
 
 ![Configurando o CE](./assets/img/ce_config.jpg)
 
@@ -319,7 +319,7 @@ Essa função retornará `RF24_SUCCESS` caso o transmissor tenha conseguido envi
 
 ### 📩 Utilizando como receptor
 
-Assim como foi falado na [subseção do transmissor]((#-utilizando-como-transmissor)), o endereço para o qual o transmissor enviará os dados precisa ser o mesmo que está registrado no código do receptor, assim como o endereço para o qual o receptor enviará o pacote de ACK precisa ser o mesmo que está no transmissor, por isso, serão usados os mesmos endereços do tutorial do transmissor:
+Assim como foi falado na [subseção do transmissor](#-utilizando-como-transmissor), o endereço para o qual o transmissor enviará os dados precisa ser o mesmo que está registrado no código do receptor, assim como o endereço para o qual o receptor enviará o pacote de ACK precisa ser o mesmo que está no transmissor, por isso, serão usados os mesmos endereços do tutorial do transmissor:
 
 ```C
 uint8_t addresses[2][5] = {{0xE7, 0xE7, 0xE7, 0xE7, 0xE8}, {0xC2, 0xC2, 0xC2, 0xC2, 0xC1}};
