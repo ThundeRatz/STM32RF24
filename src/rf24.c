@@ -77,7 +77,7 @@ static const uint8_t child_pipe_enable[] = {ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_
  *
  * @warning If set to 0, ensure 130uS delay after stopListening() and before any sends
  */
-static uint32_t txDelay = 250; // q ***** é essa?? eu n sei
+static uint32_t txDelay = 250;
 
 /*****************************************
  * Public Functions Bodies Definitions
@@ -279,7 +279,7 @@ rf24_status_t rf24_set_datarate(rf24_dev_t* p_dev, rf24_datarate_t datarate) {
         dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
     }
 
-    // ! @todo Coisas com txDelay (??)
+    //! @todo Use txDelay 
 
     switch (datarate) {
         case RF24_1MBPS: {

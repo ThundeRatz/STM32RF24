@@ -1,7 +1,7 @@
 /**
  * @file rf24_platform.h
  *
- * @brief nRF24L01 registers related.
+ * @brief nRF24L01 platform related.
  *
  * @author Lucas Haug <lucas.haug@thunderatz.org>
  * @author Lucas Schneider <lucas.schneider@thunderatz.org>
@@ -164,7 +164,7 @@ rf24_platform_status_t rf24_platform_read_payload(rf24_platform_t* p_setup, uint
 /**
  * @brief Write payload in device Tx FIFO.
  *
- * @param p_setup            Pointer to rf  setup.24 instance
+ * @param p_setup           Pointer to rf  setup.24 instance
  * @param buff              Buffer to store the payload data
  * @param len               Payload lenght
  * @param enable_auto_ack   Tells the receiver if a acknowledgement packet is expected

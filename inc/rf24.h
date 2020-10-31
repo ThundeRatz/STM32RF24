@@ -202,7 +202,7 @@ rf24_status_t rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t outpu
 rf24_status_t rf24_flush_rx(rf24_dev_t* p_dev);
 
 /**
- * @brief Flushes transmiter FIFO.
+ * @brief Flushes transmitter FIFO.
  *
  * @param p_dev Pointer to rf24 device.
  *
@@ -211,7 +211,7 @@ rf24_status_t rf24_flush_rx(rf24_dev_t* p_dev);
 rf24_status_t rf24_flush_tx(rf24_dev_t* p_dev);
 
 /**
- * @brief Enables the device transmition pipe.
+ * @brief Enables the device transmission pipe.
  *
  * @param p_dev     Pointer to rf24 device.
  * @param address   Transmitter pipe address.
@@ -326,8 +326,8 @@ rf24_status_t rf24_write_continuously(rf24_dev_t* p_dev, uint8_t* buff, uint8_t 
  * @param p_dev Pointer to rf24 device.
  *
  * @return Status register value.
- * @retval 0xFF Returns 0xFF when got an error, because status bit
- *              7 only allows 0, so 0xFF is an invalid value.
+ * @retval 0xFF Returns 0xFF when got an error, because status
+ *         bit 7 only allows 0, so 0xFF is an invalid value.
  */
 nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev);
 
