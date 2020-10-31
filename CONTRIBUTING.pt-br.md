@@ -56,7 +56,7 @@ Algumas recomendações:
 
 ### Formatação do código
 
-O código é formatado seguindo regras específicas, para mais informações de como garantir que seu código esteja formatado da forma correta, veja a seção [🎨 Formatação](./README.md#-formatação) do README.
+O código é formatado seguindo regras específicas, para mais informações de como garantir que seu código esteja formatado da forma correta, veja a seção [🎨 Formatação](./README.pt-br.md#-formatação) do README.
 
 ### Código em C
 
@@ -71,7 +71,7 @@ Existem algumas diretrizes de organização de código em C que devem seguidas.
 
 Reduza sempre os escopos das variáveis ao menor possível, evitando variáveis globais, externas e estáticas, dando preferência para variáveis locais. O mesmo é válido para funções, não crie funções públicas se elas so forem ser usadas dentro de um arquivo, deixe elas privadas.
 
-#### Nomencaltura
+#### Nomenclatura
 
 > "Você deveria nomear uma variável com o mesmo cuidado
 > com que nomearia uma criança recém-nascido."
@@ -88,7 +88,7 @@ Para indicar que uma variável é um ponteiro, adicione `p_` no início do nome 
 
 Variáveis globais de um arquivo e varáveis externas devem ser evitadas, principalmente as externas, porém caso sejam realmente necessárias, devem ser identificadas para se facilitar o entendimento de partes isoladas do código. Adicione `m_` no início do nome de uma variável para indicar que ela é uma variável global do arquivo. E para indicar que uma variável é global externa, adicione `g_` no início do nome da mesma. Caso se tivesse um ponteiro externo, por exemplo, se utilizaria `gp_`.
 
-Para mais dicas de nomencaltura, veja o artigo ["How To Create Meaningful Names In Code"](https://medium.com/better-programming/how-to-create-meaningful-names-in-code-20d7476537d4).
+Para mais dicas de nomenclatura, veja o artigo ["How To Create Meaningful Names In Code"](https://medium.com/better-programming/how-to-create-meaningful-names-in-code-20d7476537d4).
 
 #### Tipos de variáveis
 
@@ -98,7 +98,7 @@ Além disso, para variáveis inteiras faça distinção entre `signed` e `unsign
 
 #### Números mágicos/Constantes
 
-Evite [números mágicos](https://pt.wikipedia.org/wiki/N%C3%BAmero_m%C3%A1gico_(programa%C3%A7%C3%A3o_de_sistemas)) no meio do código, além eles obscurecer o entendimento do mesmo, também dificultam a manutenção. Para contornar isso, utilize constantes definidas com `#define` no ínicio do seu código.
+Evite [números mágicos](https://pt.wikipedia.org/wiki/N%C3%BAmero_m%C3%A1gico_(programa%C3%A7%C3%A3o_de_sistemas)) no meio do código, além de eles obscurecerem o entendimento do mesmo, também dificultam a manutenção. Para contornar isso, utilize constantes definidas com `#define` no ínicio do seu código.
 
 ### Menssagens de commit
 
