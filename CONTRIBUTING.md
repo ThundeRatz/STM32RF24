@@ -94,9 +94,7 @@ For more naming tips, see the article ["How To Create Meaningful Names In Code"]
 
 #### Variable types
 
-Make coherent choices for your variable types and your functions return types, besides its parameters, for examples, do not use `float` if your variable is a unit counter.
-
-Make a consistent choice for the types of variables and types of return of functions, in addition to their parameters, for example, do not use `float` if your variable will be a unit counter.
+Make coherent choices for your variable types and your functions return and parameters types. For examples, do not use `float` if your variable is a unit counter.
 
 Além disso, para variáveis inteiras faça distinção entre `signed` e `unsigned` e especifique seu tamanho em bits, isso garante mais controle sobre os valores que cada variável pode ter, como também otimiza a ocupação da memória. Para isso utilize a biblioteca `stdint.h`, podendo assim, por exemplo, se utilizar os tipos `uint8_t` para inteiros de 8 bits sem sinal e `int16_t` para inteiros de 16 bits com sinal.
 
