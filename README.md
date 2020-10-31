@@ -404,7 +404,7 @@ Toda a ajuda no desenvolvimento da robótica é bem-vinda, nós lhe encorajamos 
 
 ## ✨ Contribuidores
 
-Agradecimento a essas pessoas maravilhosas ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -424,8 +424,8 @@ Agradecimento a essas pessoas maravilhosas ([emoji key](https://allcontributors.
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-Esse projeto segue as especificações do [all-contributors](https://github.com/all-contributors/all-contributors). Contribuições de qualquer tipo são bem-vindas!
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
 ---------------------
 
-Equipe ThundeRatz de Robótica
+ThundeRatz Robotics Team
