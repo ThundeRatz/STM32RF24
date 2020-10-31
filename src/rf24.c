@@ -58,14 +58,14 @@
 /**
  * @brief Error value for status register.
  *
- * @note Bit 7 only allows 0, so 0xFF represents an erro value.
+ * @note Bit 7 only allows 0, so 0xFF represents an error value.
  */
 #define STATUS_REG_ERROR_VALUE 0xFF
 
 /**
  * @brief Error value for channel.
  *
- * @note The max channel value is 125, so 0xFF represents an erro value.
+ * @note The max channel value is 125, so 0xFF represents an error value.
  */
 #define CHANNEL_ERROR_VALUE 0xFF
 
@@ -193,7 +193,7 @@ rf24_status_t rf24_init(rf24_dev_t* p_dev) {
 
     if (dev_status == RF24_SUCCESS) {
         // If setup is 0x00 or 0xFF then there was no response from module
-        if ((rf_setup_reg.value == 0) || (rf_setup_reg.value == 0xFF)) {
+        if ((rf_setup_reg.value == 0x00) || (rf_setup_reg.value == 0xFF)) {
             dev_status = RF24_UNKNOWN_ERROR;
         }
     }
