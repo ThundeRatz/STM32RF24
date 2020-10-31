@@ -102,7 +102,7 @@ Besides that, for integer variables, distinguish between `signed` and `unsigned`
 
 #### Magic numbers/Constants
 
-Avoid [magic numbers](https://en.wikipedia.org/wiki/Magic_number_(programming)) in your code, in addition to obscuring the understanding of it, they also make maintenance difficult. To solve this, use constants defined with `#define` at the beginning of your code.
+Avoid [magic numbers](https://en.wikipedia.org/wiki/Magic_number_(programming)) in your code. In addition to decreasing readability, they also make maintenance difficult. To solve this, use constants defined with `#define` at the beginning of your code.
 
 ### Git commit messages
 
