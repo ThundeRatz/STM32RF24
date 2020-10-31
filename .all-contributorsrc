@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "d",
+      "name": "Jesse Zhang",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/440892?v=4",
+      "profile": "https://greenplum.org",
+      "contributions": [
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "STM32RF24",
+  "projectOwner": "ThundeRatz",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
