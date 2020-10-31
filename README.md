@@ -8,7 +8,7 @@
 
 # 📡 STM32RF24
 
-Para a versão em PT-BR 🇧🇷 desse documento, [veja aqui](./README.pt-br.md)
+Para a versão em PT-BR 🇧🇷 desse documento, [veja aqui](./README.pt-br.md).
 
 ## 📜 Index
 
@@ -427,4 +427,4 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ---------------------
 
-ThundeRatz Robotics Team
+<img src="https://static.thunderatz.org/teamassets/logo-simples.png" width="200px" />

@@ -428,4 +428,4 @@ Esse projeto segue as especificações do [all-contributors](https://github.com/
 
 ---------------------
 
-Equipe ThundeRatz de Robótica
+<img src="https://static.thunderatz.org/teamassets/logo-simples.png" width="200px" />
