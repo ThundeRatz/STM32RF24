@@ -48,8 +48,7 @@ uint8_t rf24_debug_read_reg8(rf24_dev_t* p_dev, nrf24l01_registers_t reg);
  * Public Functions Bodies Definitions
  *****************************************/
 
-void rf24_debug_dump_registers(rf24_dev_t* p_dev)
-{
+void rf24_debug_dump_registers(rf24_dev_t* p_dev) {
     PRINTF("================  REGISTER DUMP ================ \r\n");
 
     /* NRF24L01_REG_CONFIG */
@@ -60,7 +59,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
         reg_config.value, reg_config.mask_rx_dr, reg_config.mask_tx_ds, reg_config.mask_max_rt,
         reg_config.en_crc, reg_config.crco, reg_config.pwr_up, reg_config.prim_rx);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_EN_AA */
 
@@ -70,7 +69,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
         reg_en_aa.value, reg_en_aa.enaa_p5, reg_en_aa.enaa_p4, reg_en_aa.enaa_p3,
         reg_en_aa.enaa_p2, reg_en_aa.enaa_p1, reg_en_aa.enaa_p0);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_EN_RXADDR */
 
@@ -80,7 +79,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
         reg_en_rxaddr.value, reg_en_rxaddr.erx_p5, reg_en_rxaddr.erx_p4, reg_en_rxaddr.erx_p3,
         reg_en_rxaddr.erx_p2, reg_en_rxaddr.erx_p1, reg_en_rxaddr.erx_p0);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_SETUP_AW */
 
@@ -88,7 +87,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
     PRINTF("[03] SETUP_AW    = 0x%02X | AW=%d (%s)\r\n", reg_setup_aw.value, reg_setup_aw.aw,
            (reg_setup_aw.aw == 0b00) ? "Illegal" : (reg_setup_aw.aw == 0b01) ? "3 bytes" : (reg_setup_aw.aw == 0b10) ? "4 bytes" : (reg_setup_aw.aw == 0b11) ? "5 bytes" : "???????");
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_SETUP_RETR */
 
@@ -96,7 +95,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
     PRINTF("[04] SETUP_RETR  = 0x%02X | ARD=%d (%d us)  ARC=%d (retransmits)\r\n", reg_setup_retr.value,
            reg_setup_retr.ard, 250 * (1 + reg_setup_retr.ard), reg_setup_retr.arc);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_RF_CH */
 
@@ -104,7 +103,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
     PRINTF("[05] RF_CH       = 0x%02X | RF_CH=%d (%d MHz)\r\n", reg_rf_ch.value,
            reg_rf_ch.rf_ch, reg_rf_ch.rf_ch + 2400);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_RF_SETUP */
 
@@ -115,7 +114,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
            reg_rf_setup.pll_lock, reg_rf_setup.rf_pwr,
            (reg_rf_setup.rf_pwr == 0b00) ? "-18" : (reg_rf_setup.rf_pwr == 0b01) ? "-12" : (reg_rf_setup.rf_pwr == 0b10) ? " -6" : (reg_rf_setup.rf_pwr == 0b11) ? "  0" : "???????");
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_STATUS */
 
@@ -124,7 +123,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
            reg_status.rx_dr, reg_status.tx_ds, reg_status.max_rt, reg_status.rx_p_no,
            reg_status.tx_full);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_OBSERVE_TX */
 
@@ -132,14 +131,14 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
     PRINTF("[08] OBSERVE_TX  = 0x%02X | PLOS_CNT=%d    ARC_CNT=%d\r\n", reg_observe_tx.value,
            reg_observe_tx.plos_cnt, reg_observe_tx.arc_cnt);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_RPD */
 
     nrf24l01_reg_rpd_t reg_rpd = {rf24_debug_read_reg8(p_dev, NRF24L01_REG_RPD)};
     PRINTF("[09] RPD         = 0x%02X | RPD=%d\r\n", reg_rpd.value, reg_rpd.rpd);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_RX_ADDR_P0 */
 
@@ -148,7 +147,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
     PRINTF("[0A] RX_ADDR_P0  = [0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X]\r\n", reg_rx_addr_p0.value[0], reg_rx_addr_p0.value[1],
            reg_rx_addr_p0.value[2], reg_rx_addr_p0.value[3], reg_rx_addr_p0.value[4]);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_RX_ADDR_P1 */
 
@@ -157,7 +156,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
     PRINTF("[0B] RX_ADDR_P1  = [0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X]\r\n", reg_rx_addr_p1.value[0], reg_rx_addr_p1.value[1],
            reg_rx_addr_p1.value[2], reg_rx_addr_p1.value[3], reg_rx_addr_p1.value[4]);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_RX_ADDR_P2 to NRF24L01_REG_RX_ADDR_P5 */
 
@@ -170,7 +169,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
     nrf24l01_reg_1byte_addr_t reg_rx_addr_p5 = {rf24_debug_read_reg8(p_dev, NRF24L01_REG_RX_ADDR_P5)};
     PRINTF("[0F] RX_ADDR_P5  = 0x%02X\r\n", reg_rx_addr_p5.value);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_TX_ADDR */
 
@@ -179,7 +178,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
     PRINTF("[10] TX_ADDR     = [0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X]\r\n", reg_tx_addr.value[0], reg_tx_addr.value[1],
            reg_tx_addr.value[2], reg_tx_addr.value[3], reg_tx_addr.value[4]);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_RX_PW_Px */
 
@@ -196,7 +195,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
     nrf24l01_reg_rx_pw_p5_t reg_rx_pw_p5 = {rf24_debug_read_reg8(p_dev, NRF24L01_REG_RX_PW_P5)};
     PRINTF("[16] RX_PW_P5    = 0x%02X\r\n", reg_rx_pw_p5.value);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_FIFO_STATUS */
 
@@ -205,7 +204,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
            reg_fifo_status.tx_reuse, reg_fifo_status.tx_full, reg_fifo_status.tx_empty, reg_fifo_status.rx_full,
            reg_fifo_status.rx_empty);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_DYNPD */
 
@@ -214,7 +213,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
            reg_dynpd.dpl_p5, reg_dynpd.dpl_p4, reg_dynpd.dpl_p3, reg_dynpd.dpl_p2,
            reg_dynpd.dpl_p1, reg_dynpd.dpl_p0);
 
-    rf24_delay(RF24_DEBUG_DELAY_MS); // Delay is needed so RTT can print the registers values.
+    rf24_delay(RF24_DEBUG_DELAY_MS);  // Delay is needed so RTT can print the registers values.
 
     /* NRF24L01_REG_FEATURE */
 
@@ -225,8 +224,7 @@ void rf24_debug_dump_registers(rf24_dev_t* p_dev)
     PRINTF("\r\n");
 }
 
-void rf24_debug_print_status(rf24_dev_t* p_dev)
-{
+void rf24_debug_print_status(rf24_dev_t* p_dev) {
     nrf24l01_reg_status_t reg_status = rf24_get_status(p_dev);
 
     PRINTF("[07] STATUS      = 0x%02X | RX_DR=%d  TX_DS=%d  MAX_RT=%d  RX_P_NO=%d  TX_FULL=%d\r\n", reg_status.value,
@@ -238,8 +236,7 @@ void rf24_debug_print_status(rf24_dev_t* p_dev)
  * Private Functions Bodies Definitions
  *****************************************/
 
-uint8_t rf24_debug_read_reg8(rf24_dev_t* p_dev, nrf24l01_registers_t reg)
-{
+uint8_t rf24_debug_read_reg8(rf24_dev_t* p_dev, nrf24l01_registers_t reg) {
     uint8_t value;
     rf24_platform_read_reg8(&(p_dev->platform_setup), reg, &value);
     return value;

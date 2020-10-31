@@ -253,7 +253,7 @@ uint8_t rf24_get_channel(rf24_dev_t* p_dev) {
     dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
     if (dev_status != RF24_SUCCESS) {
-        return 0xFF; // Invalid value, meaning error
+        return 0xFF;  // Invalid value, meaning error
     }
 
     return reg.rf_ch;
@@ -546,7 +546,7 @@ rf24_status_t rf24_stop_listening(rf24_dev_t* p_dev) {
     }
 
     if (reg_feature.en_ack_pay) {
-        rf24_delay(m_tx_delay); // 250
+        rf24_delay(m_tx_delay);  // 250
 
         if (dev_status == RF24_SUCCESS) {
             dev_status = rf24_flush_tx(p_dev);
@@ -663,9 +663,9 @@ rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool ena
     if (status_reg.max_rt) {
         dev_status = RF24_MAX_RETRANSMIT;
 
-        status_reg.max_rt = 1; // Datasheet says to write 1 to clear the interruption bit.
+        status_reg.max_rt = 1;  // Datasheet says to write 1 to clear the interruption bit.
         rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
-        rf24_flush_tx(p_dev); // Only going to be 1 packet in the FIFO at a time using this method, so just flush.
+        rf24_flush_tx(p_dev);  // Only going to be 1 packet in the FIFO at a time using this method, so just flush.
 
         return dev_status;
     }
@@ -713,7 +713,7 @@ nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev) {
     rf24_platform_status_t platform_status = rf24_platform_get_status(&(p_dev->platform_setup), &status_reg);
 
     if (platform_status != RF24_PLATFORM_SUCCESS) {
-        status_reg.value = 0xFF; // Bit 7 only allows 0, so 0xFF represents an erro value.
+        status_reg.value = 0xFF;  // Bit 7 only allows 0, so 0xFF represents an erro value.
     }
 
     return status_reg;
