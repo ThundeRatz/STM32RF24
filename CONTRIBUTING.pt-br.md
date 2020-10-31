@@ -67,7 +67,7 @@ Existem algumas diretrizes de organização de código em C que devem seguidas.
 
 ― Harold Abelson, Structure and Interpretation of Computer Programs
 
-#### Escopos
+#### Escopos de variáveis e funções
 
 Reduza sempre os escopos das variáveis ao menor possível, evitando variáveis globais, externas e estáticas, dando preferência para variáveis locais. O mesmo é válido para funções, não crie funções públicas se elas so forem ser usadas dentro de um arquivo, deixe elas privadas.
 
@@ -98,7 +98,7 @@ Além disso, para variáveis inteiras faça distinção entre `signed` e `unsign
 
 #### Números mágicos/Constantes
 
-Evite [números mágicos](https://pt.wikipedia.org/wiki/N%C3%BAmero_m%C3%A1gico_(programa%C3%A7%C3%A3o_de_sistemas)) no meio do código, além de eles obscurecerem o entendimento do mesmo, também dificultam a manutenção. Para contornar isso, utilize constantes definidas com `#define` no ínicio do seu código.
+Evite [números mágicos](https://pt.wikipedia.org/wiki/N%C3%BAmero_m%C3%A1gico_(programa%C3%A7%C3%A3o_de_sistemas)) no meio do código. Além de eles dificultarem a leitura do mesmo, também dificultam a manutenção. Para contornar isso, utilize constantes definidas com `#define` no ínicio do seu código.
 
 ### Menssagens de commit
 

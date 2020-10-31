@@ -147,7 +147,7 @@ To configure your hardware, you must first analyze the pinout of the nRF24L01 mo
 
 ![nRF24L01 Module's Pinout](./assets/img/nrf24l01_pinout.png)
 
-The module uses SPI (Serial Protocol Interface) to communicate with the microcontroller (to learn more about SPI, I recommend this article [here](https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all) from Sparkfun), so four pins are required for this communication, SCK, MISO, MOSI and CSN. The CSN is a GPIO pin, while the others are dedicated pins.
+The module uses SPI (Serial Protocol Interface) to communicate with the microcontroller (to learn more about SPI, we recommend this article [here](https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all) from Sparkfun), so four pins are required for this communication, SCK, MISO, MOSI and CSN. The CSN is a GPIO pin, while the others are dedicated pins.
 
 In addition, a GPIO pin connected to the CE (Chip Enable) is needed, which is used to control the module, enabling the transition between the states of the module's finite state machine.
 
@@ -391,7 +391,7 @@ if ((device_status = rf24_available(p_dev, NULL)) == RF24_SUCCESS) {
 
 ### 🐛 Debugging
 
-To debug your code it is possible to use the functions of the file `rf24_debug.c/.h`, but for this it is also necessary to define a `printf` function. For ease of use, I recommend adding the [SEGGER_RTT](https://github.com/ThundeRatz/SEGGER_RTT) to the project. After adding it, having called the debugging functions in your code, to see what is being "printed" by the functions, run in the terminal, being at the root of your project:
+To debug your code it is possible to use the functions of the file `rf24_debug.c/.h`, but for this it is also necessary to define a `printf` function. For ease of use, we recommend adding the [SEGGER_RTT](https://github.com/ThundeRatz/SEGGER_RTT) to the project. After adding it, having called the debugging functions in your code, to see what is being "printed" by the functions, run in the terminal, being at the root of your project:
 
 ```C
 make rtt

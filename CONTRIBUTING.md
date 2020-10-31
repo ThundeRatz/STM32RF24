@@ -69,7 +69,7 @@ There are some guidelines for organizing C code that should be followed.
 
 ― Harold Abelson, Structure and Interpretation of Computer Programs
 
-#### Scopes
+#### Variables and functions scopes
 
 Always reduce the scopes of the to the minimum possible, avoiding global, external and static variables, giving preference to local variables. The same is ture for functions, do not create public functions if they are only to be used within a file, leave them private.
 
@@ -95,8 +95,6 @@ For more naming tips, see the article ["How To Create Meaningful Names In Code"]
 #### Variable types
 
 Make coherent choices for your variable types and your functions return and parameters types. For examples, do not use `float` if your variable is a unit counter.
-
-Além disso, para variáveis inteiras faça distinção entre `signed` e `unsigned` e especifique seu tamanho em bits, isso garante mais controle sobre os valores que cada variável pode ter, como também otimiza a ocupação da memória. Para isso utilize a biblioteca `stdint.h`, podendo assim, por exemplo, se utilizar os tipos `uint8_t` para inteiros de 8 bits sem sinal e `int16_t` para inteiros de 16 bits com sinal.
 
 Besides that, for integer variables, distinguish between `signed` and `unsigned` and specify their size in bits, this ensures more control over the values that each variable can have, as well as optimizes the memory occupation. To do this, use the `stdint.h` library, than, for example, you can use the types `uint8_t` for unsigned 8-bit integers and `int16_t` for signed 16-bit integers.
 
