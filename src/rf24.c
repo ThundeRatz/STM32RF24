@@ -177,7 +177,7 @@ rf24_status_t rf24_init(rf24_dev_t* p_dev) {
     if (dev_status == RF24_SUCCESS) {
         // If setup is 0x00 or 0xFF then there was no response from module
         if ((rf_setup_reg.value == 0) || (rf_setup_reg.value == 0xFF)) {
-            dev_status = RF24_UNKNOWN_ERRO;
+            dev_status = RF24_UNKNOWN_ERROR;
         }
     }
 
@@ -319,7 +319,7 @@ rf24_status_t rf24_set_datarate(rf24_dev_t* p_dev, rf24_datarate_t datarate) {
 
         if (dev_status == RF24_SUCCESS) {
             if (temp_reg != reg_rf_setup.value) {
-                dev_status = RF24_UNKNOWN_ERRO;
+                dev_status = RF24_UNKNOWN_ERROR;
             }
         }
     }
@@ -352,7 +352,7 @@ rf24_status_t rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t outpu
 
         if (dev_status == RF24_SUCCESS) {
             if (temp_reg != reg_rf_setup.value) {
-                dev_status = RF24_UNKNOWN_ERRO;
+                dev_status = RF24_UNKNOWN_ERROR;
             }
         }
     }

@@ -41,7 +41,7 @@ typedef enum rf24_status {
     RF24_BUFFER_TOO_SMALL = 5,
     RF24_INTERRUPT_NOT_CLEARED = 6,
     RF24_INVALID_PARAMETERS = 7,
-    RF24_UNKNOWN_ERRO = 8,
+    RF24_UNKNOWN_ERROR = 8,
 } rf24_status_t;
 
 /**
