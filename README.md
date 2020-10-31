@@ -8,36 +8,36 @@
 
 # 📡 STM32RF24
 
-## 📜 Índice
+## 📜 Index
 
-- [🎉 Introdução](#-introdução)
-- [➕ Requisitos](#-requisitos)
-- [📦 Submódulos com Git](#-submódulos-com-git)
-  - [💥 Adicionando um submódulo](#-adicionando-um-submódulo)
-  - [✅ Inicializando um submódulo já existente](#-inicializando-um-submódulo-já-existente)
-- [📁 Estrutura do Repositório](#-estrutura-do-repositório)
-- [📝 Documentação](#-documentação)
-- [🎨 Formatação](#-formatação)
-- [🏗️ Estrutura do Código](#-estrutura-do-código)
-- [🔌 Configuração de Hardware](#-configuração-de-hardware)
-  - [🤔 Conhecendo o módulo](#-conhecendo-o-módulo)
-  - [🔧 Configurando o microcontrolador](#-configurando-o-microcontrolador)
-- [📚 Usando a biblioteca](#-usando-a-biblioteca)
-  - [🏁 Inicializando](#-inicializando)
-  - [📤 Utilizando como transmissor](#-utilizando-como-transmissor)
-  - [📩 Utilizando como receptor](#-utilizando-como-receptor)
-  - [🐛 Depuração](#-depuração)
-- [👥 Contribuindo](#-contribuindo)
-- [✨ Contribuidores](#-contribuidores)
+- [🎉 Intro](#-intro)
+- [➕ Requirements](#-requirements)
+- [📦 Git Submodules](#-git-submodules)
+  - [💥 Adding a submodule](#-adding-a-submodule)
+  - [✅ Initializing a existing submodule](#-initializing-a-existing-submodule)
+- [📁 Repository Structure](#-repository-structure)
+- [📝 Documentation](#-documentation)
+- [🎨 Formatting](#-formatting)
+- [🏗️ Code Structure](#-code-structure)
+- [🔌 Hardware Configuration](#-hardware-configuration)
+  - [🤔 Getting to know the module](#-getting-to-know-the-module)
+  - [🔧 Configuring the microcontroller](#-configuring-the-microcontroller)
+- [📚 Using the library](#-using-the-library)
+  - [🏁 Initializing](#-initializing)
+  - [📤 Using as a transmitter](#-using-as-a-transmitter)
+  - [📩 Using as a receiver](#-using-as-a-receiver)
+  - [🐛 Debugging](#-debugging)
+- [👥 Contributing](#-contributing)
+- [✨ Contributors](#-contributors)
 
-## 🎉 Introdução
+## 🎉 Intro
 
 Esse repositório contém uma biblioteca para lidar com o módulo de radiofrequência nRF24L01 da Nordic Semiconductor, cujo datasheet pode ser visto [aqui](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf), ao se utilizar os microcontroladores da família [STM32](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html).
 
 Essa biblioteca foi feita para ser utilizada como submódulo no [STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate).
 
 
-## ➕ Requisitos
+## ➕ Requirements
 
 Essa biblioteca não requer, para funcionar, nenhum requisito extra, além dos já listados [requisitos do STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate#requisitos).
 
@@ -58,11 +58,11 @@ sudo apt install uncrustify
 No Windows, baixe o .zip no [SourceForge](https://sourceforge.net/projects/uncrustify/files/). Adicione o local do executável na variável de ambiente `PATH`.
 
 
-## 📦 Submódulos com Git
+## 📦 Adding a submodule
 
 Como dito, essa biblioteca funciona como um submódulo. Dessa forma se facilita escolher a versão da biblioteca que será utilizada no projeto, permitindo também o desenvolvimento em paralelo da biblioteca.
 
-### 💥 Adicionando um submódulo
+### 💥 Adding a submodule
 
 Crie um diretório chamado `lib`, caso não exista:
 
@@ -82,7 +82,7 @@ git submodule add --name STM32RF24 https://github.com/ThundeRatz/STM32RF24.git l
 git submodule add --name STM32RF24 git@github.com:ThundeRatz/STM32RF24.git lib/STM32RF24
 ```
 
-### ✅ Inicializando um submódulo já existente
+### ✅ Initializing a existing submodule
 
 Ao clonar um repositório que já tenha submódulos, é necessário clonar os repositórios desse submódulo. Isso pode ser feito de duas formas, clonando junto com o repositório do projeto ou depois de já ter clonado.
 
@@ -101,7 +101,7 @@ git submodule update --init
 ```
 
 
-## 📁 Estrutura do Repositório
+## 📁 Repository Structure
 
 O repositório contém as seguintes pastas:
 
@@ -112,7 +112,7 @@ O repositório contém as seguintes pastas:
 Na raiz do repositório, além dos arquivos que contém o código de conduta, diretrizes de contribuição, README e licença, há o arquivo `sources.mk`, que é responsável por possibilitar com que os arquivos da biblioteca sejam encontrados quando se compila o código. Também há um `Doxyfile` para gerar a documentação. Outro arquivo relevante é o `uncrustify.cfg` que é utilizado para formatar os arquivos.
 
 
-## 📝 Documentação
+## 📝 Documentation
 
 Essa biblioteca é documentada usando Doxygen. Para gera a documentação, rode o seguinte comando estando na raiz do seu repositório:
 
@@ -122,7 +122,7 @@ doxygen
 
 As configurações estão no arquivo [Doxyfile](./Doxyfile).
 
-## 🎨 Formatação
+## 🎨 Formatting
 
 Além de uma boa documentação, é necessário que o código sempre esteja bem formatado, o que facilita sua compreensão. Para isso foi utilizado o `uncrustify`. Com o `uncrustify` instalado, para formatar um arquivo que tenha mudado, rode o seguinte comando:
 
@@ -130,7 +130,7 @@ Além de uma boa documentação, é necessário que o código sempre esteja bem 
 uncrustify -c uncrustify.cfg --replace --no-backup caminho_até_o_arquivo/nome_do_arquivo
 ```
 
-## 🏗️ Estrutura do Código
+## 🏗️ Code Structure
 
 O código está estruturado da seguinte forma:
 
@@ -140,9 +140,9 @@ O código está estruturado da seguinte forma:
 - `rf24_debug.c/.h` → funções úteis para se validar o funcionamento do módulo.
 
 
-## 🔌 Configuração de Hardware
+## 🔌 Hardware Configuration
 
-### 🤔 Conhecendo o módulo
+### 🤔 Getting to know the module
 
 Para se fazer a configuração do seu hardware, é necessário primeiramente se analisar a pinagem do módulo nRF24L01, como pode ser vista abaixo:
 
@@ -154,7 +154,7 @@ Além disso, é necessário um pino de GPIO conectado ao CE (Chip Enable), que �
 
 O módulo também conta com um pino IRQ (Interruption Request), possibilitando o funcionamento do módulo por meio de interrupções, esse pino deve ser conectado em um pino que suporte interrupções no microcontrolador caso se queira fazer uso desse recurso, caso contrário, deve-se ligá-lo ao 3,3V, uma vez que o pino é ativo baixo.
 
-### 🔧 Configurando o microcontrolador
+### 🔧 Configuring the microcontroller
 
 Para fazer a configuração do microcontrolador será utilizado o [STM32CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html), um dos requisitos do [STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate). Além disso, será necessário já se ter um projeto configurado no Cube, caso não tenha veja o [README do STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate#stm32-project-template) e para mais detalhes veja o [STM32Guide](https://github.com/ThundeRatz/STM32Guide).
 
@@ -186,7 +186,7 @@ Como o pino IRQ é ativo baixo, é necessário configurá-lo assim. Para isso, c
 
 Com todas as configurações feitas, salve o projeto e feche-o. Para gerar as arquivos do Cube, siga as instruções no [README do STM32ProjectTemplate](https://github.com/ThundeRatz/STM32ProjectTemplate#gerando-arquivos).
 
-## 📚 Usando a biblioteca
+## 📚 Using the library
 
 A biblioteca possui diferentes funções para configurar parâmetros do módulo, receber e transmitir de formas diferentes. Nessa seção se mostrará uma forma básica de se inicializar o módulo, utilizá-lo como receptor ou como transmissor.
 
@@ -217,7 +217,7 @@ rf24_status_t rf24_delay(uint32_t ms) {
 }
 ```
 
-### 🏁 Inicializando
+### 🏁 Initializing
 
 Antes de se inicializar o módulo em si, é necessário se inicializar o SPI que foi configurado no Cube. O nome da função depende de qual SPI se escolheu, para o escolhido na seção de [🔌 Configuração de Hardware](#-configuração-de-hardware) acima, seria a seguinte função:
 
@@ -270,7 +270,7 @@ rf24_init(p_dev);
 
 Essa função irá retornar `RF24_SUCCESS` caso a inicialização seja bem sucedida e valores de erro caso contrário. Para mais detalhes sobre os possíveis valores de erro, veja a documentação do código.
 
-### 📤 Utilizando como transmissor
+### 📤 Using as a transmitter
 
 Para se utilizar um módulo como transmissor é necessário saber o endereço do receptor para o qual se enviará a mensagem, essa informação precisa ser compartilhada entre os dois, caso contrário não é possível fazer a comunicação. Além disso, como aqui será mostrado como se comunicar com ACK, o transmissor se comportará por um período como receptor esperando o pacote de ACK, dessa forma também é necessário que ele tenha um endereço de receptor, esse endereço também precisa ser uma informação que os dois módulos têm.
 
@@ -317,7 +317,7 @@ device_status = rf24_write(p_dev, buffer, 15, true);
 
 Essa função retornará `RF24_SUCCESS` caso o transmissor tenha conseguido enviar a mensagem e, como a comunicação é feita com ACK, caso o receptor tenha recebido a mensagem.
 
-### 📩 Utilizando como receptor
+### 📩 Using as a receiver
 
 Assim como foi falado na [subseção do transmissor]((#-utilizando-como-transmissor)), o endereço para o qual o transmissor enviará os dados precisa ser o mesmo que está registrado no código do receptor, assim como o endereço para o qual o receptor enviará o pacote de ACK precisa ser o mesmo que está no transmissor, por isso, serão usados os mesmos endereços do tutorial do transmissor:
 
@@ -390,7 +390,7 @@ if ((device_status = rf24_available(p_dev, NULL)) == RF24_SUCCESS) {
 }
 ```
 
-### 🐛 Depuração
+### 🐛 Debugging
 
 Para depurar o seu código é possível utilizar as funções do `rf24_debug.c/.h`, porém para isso também é necessário definir uma função `printf`. Para facilitar o uso, recomendo adicionar a biblioteca [SEGGER_RTT](https://github.com/ThundeRatz/SEGGER_RTT) ao projeto. Após adicioná-la, tendo chamado as funções de depuração em seu código, para ver o que está sendo "impresso" pelas funções, rode no terminal, estando na raiz de seu projeto:
 
@@ -398,11 +398,11 @@ Para depurar o seu código é possível utilizar as funções do `rf24_debug.c/.
 make rtt
 ```
 
-## 👥 Contribuindo
+## 👥 Contributing
 
-Toda a ajuda no desenvolvimento da robótica é bem-vinda, nós lhe encorajamos a contribuir para o projeto! Para saber como fazer, veja as diretrizes de contribuição [aqui](CONTRIBUTING.pt-br.md).
+Any help in the development of robotics is welcome, we encourage you to contribute to the project! To learn how, see the contribution guidelines [here](CONTRIBUTING.md).
 
-## ✨ Contribuidores
+## ✨ Contributors
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
