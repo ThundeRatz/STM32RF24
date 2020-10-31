@@ -98,7 +98,7 @@ Além disso, para variáveis inteiras faça distinção entre `signed` e `unsign
 
 #### Números mágicos/Constantes
 
-Evite [números mágicos](https://pt.wikipedia.org/wiki/N%C3%BAmero_m%C3%A1gico_(programa%C3%A7%C3%A3o_de_sistemas)) no meio do código. Além de eles dificultarem a leitura do mesmo, também dificultam a manutenção. Para contornar isso, utilize constantes definidas com `#define` no ínicio do seu código.
+Evite [números mágicos](https://pt.wikipedia.org/wiki/N%C3%BAmero_m%C3%A1gico_(programa%C3%A7%C3%A3o_de_sistemas)) no meio do código. Além de eles dificultarem o entendimento, também dificultam a manutenção do projeto. Para contornar isso, utilize constantes definidas com `#define` no ínicio do seu código.
 
 ### Menssagens de commit
 
