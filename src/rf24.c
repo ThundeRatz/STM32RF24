@@ -175,6 +175,7 @@ rf24_status_t rf24_init(rf24_dev_t* p_dev) {
     }
 
     if (dev_status == RF24_SUCCESS) {
+        // If setup is 0 or ff then there was no response from module
         if ((rf_setup_reg.value == 0) || (rf_setup_reg.value == 0xFF)) {
             dev_status = RF24_UNKNOWN_ERRO;
         }
