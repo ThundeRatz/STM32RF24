@@ -60,7 +60,7 @@ sudo apt install uncrustify
 On Windows, download the .zip from [SourceForge](https://sourceforge.net/projects/uncrustify/files/). Add the location of the executable in the `PATH` environment variable.
 
 
-## 📦 Adding a submodule
+## 📦 Git Submodules
 
 As stated, this library functions as a submodule. In this way, it is easier to choose the version of the library that will be used in the project, also allowing its development in parallel.
 
