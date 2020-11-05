@@ -71,7 +71,7 @@ There are some guidelines for organizing C code that should be followed.
 
 #### Variables and functions scopes
 
-Always reduce the scopes of the to the minimum possible, avoiding global, external and static variables, giving preference to local variables. The same is ture for functions, do not create public functions if they are only to be used within a file, leave them private.
+Always reduce the scopes of the variables to the minimum possible, avoiding global, external and static, giving preference to local variables. The same is true for functions, do not create public functions if they are only to be used within a file, leave them private.
 
 #### Nomenclature
 
