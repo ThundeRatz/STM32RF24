@@ -82,9 +82,9 @@ Primeiramente, para manter o padrão, deixe todos os nomes das variáveis, funç
 
 Escolha nomes com significado, os nomes devem mostrar para que a variável, por exemplo, é utilizada no código, portanto, nunca utilize variáveis com somente uma letra, além de não dizer nada sobre o que ela é, também se dificulta a localização da variável no código.
 
-Para variáveis ou constantes, por exemplo, que tenham unidade de medida, inclua essa unidade de medida no nome, isso facilita a compreensão do seu signifcado.
+Para variáveis ou constantes, por exemplo, que tenham unidade de medida, inclua essa unidade de medida no nome, isso facilita a compreensão do seu significado.
 
-Para indicar que uma variável é um ponteiro, adicione `p_` no início do nome da variável, caso ela seja um ponteiro de um ponteiro, por exemplo, adcione `pp_`.
+Para indicar que uma variável é um ponteiro, adicione `p_` no início do nome da variável, caso ela seja um ponteiro de um ponteiro, por exemplo, adicione `pp_`.
 
 Variáveis globais de um arquivo e varáveis externas devem ser evitadas, principalmente as externas, porém caso sejam realmente necessárias, devem ser identificadas para se facilitar o entendimento de partes isoladas do código. Adicione `m_` no início do nome de uma variável para indicar que ela é uma variável global do arquivo. E para indicar que uma variável é global externa, adicione `g_` no início do nome da mesma. Caso se tivesse um ponteiro externo, por exemplo, se utilizaria `gp_`.
 
@@ -98,14 +98,14 @@ Além disso, para variáveis inteiras faça distinção entre `signed` e `unsign
 
 #### Números mágicos/Constantes
 
-Evite [números mágicos](https://pt.wikipedia.org/wiki/N%C3%BAmero_m%C3%A1gico_(programa%C3%A7%C3%A3o_de_sistemas)) no meio do código. Além de eles dificultarem o entendimento, também dificultam a manutenção do projeto. Para contornar isso, utilize constantes definidas com `#define` no ínicio do seu código.
+Evite [números mágicos](https://pt.wikipedia.org/wiki/N%C3%BAmero_m%C3%A1gico_(programa%C3%A7%C3%A3o_de_sistemas)) no meio do código. Além de eles dificultarem o entendimento, também dificultam a manutenção do projeto. Para contornar isso, utilize constantes definidas com `#define` no início do seu código.
 
-### Menssagens de commit
+### Mensagens de commit
 
-- As menssagens devem ser escritas preferencialmente em inglês.
+- As mensagens devem ser escritas preferencialmente em inglês.
 - Use o tempo presente ("Add feature" não "Added feature")
 - Use o modo imperativo ("Move cursor to..." não "Moves cursor to...")
-- Nós recomendamos fortemente iniciar a menssagem de commit com um emoji relacionado
+- Nós recomendamos fortemente iniciar a mensagem de commit com um emoji relacionado
   - 📝 `:memo:` para documentação
   - 🐛 `:bug:` para bugs
   - 🚑 `:ambulance:` para correções críticas

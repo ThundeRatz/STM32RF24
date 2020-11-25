@@ -200,7 +200,7 @@ Além do que será mostrado nas subseções abaixo, para o  funcionamento da bib
  *
  * @note This function must be implemented by the user.
  *
- * @param ms Delay in miliseconds.
+ * @param ms Delay in milliseconds.
  *
  * @return @ref rf24_status.
  */
