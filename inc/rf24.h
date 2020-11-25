@@ -359,7 +359,7 @@ rf24_irq_t rf24_irq_callback(rf24_dev_t* p_dev);
  *
  * @note This function must be implemented by the user.
  *
- * @param ms Delay in miliseconds.
+ * @param ms Delay in milliseconds.
  *
  * @return @ref rf24_status.
  */
