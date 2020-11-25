@@ -14,7 +14,7 @@ Please note that this project is released with a [Contributor Code of Conduct](.
 
 Most contributions are made with [GitHub Issues](https://guides.github.com/features/issues/). They will be primarily used for
 
-1. Trackking bugs - `bug`
+1. Tracking bugs - `bug`
 2. Suggesting Enhancements - `enhancement`
 3. Improving documentation - `documentation`
 
@@ -26,7 +26,7 @@ But before creating an issue, first check if there is already one with the same 
 
 - Use a clear title
 - Specify the version of the library
-- Specify OS, VM (if applicable), project's microcontroller, and other configurations that may be usefull
+- Specify OS, VM (if applicable), project's microcontroller, and other configurations that may be useful
 - Describe the steps to reproduce the bug
 - Describe the observed and the expected behavior
 - Include screenshots, gifs, any type of reference that helps to explain the problem
@@ -38,7 +38,7 @@ But before creating an issue, first check if there is already one with the same 
 - Describe the expected behavior after implementing this idea
 - Explain why this new feature or update can be usefull
 
-#### Imporoving documentation 📝
+#### Improving documentation 📝
 
 - Use a clear title
 - Specify the files that need to be documented
@@ -48,7 +48,7 @@ But before creating an issue, first check if there is already one with the same 
 
 If you want to contribute with code to the project, search for an open issue and start developing. When you are ready, open a Pull Request and we will review it.
 
-A few recomendations:
+A few recommendations:
 
 - Describe exactly what you've done, always as clear as possible
 - Link the applicable issue in your Pull Request (if there is none, please, create a new one)
@@ -110,7 +110,7 @@ Avoid [magic numbers](https://en.wikipedia.org/wiki/Magic_number_(programming)) 
   - 📝 `:memo:` for documentation
   - 🐛 `:bug:` for bug issues
   - 🚑 `:ambulance:` for critical fixes
-  - 🎨 `:art:` for imporoving structure
+  - 🎨 `:art:` for improving structure
   - ✨ `:sparkles:` for new features
 
   For more examples, see [this reference](https://gitmoji.carloscuesta.me/).
