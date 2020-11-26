@@ -1,7 +1,7 @@
 /**
  * @file rf24_platform.c
  *
- * @brief nRF24L01 registers related.
+ * @brief nRF24L01 platform related.
  *
  * @author Lucas Schneider <lucas.schneider@thunderatz.org>
  * @author Lucas Haug <lucas.haug@thunderatz.org>

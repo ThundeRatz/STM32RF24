@@ -1,0 +1,70 @@
+{
+  "projectName": "STM32RF24",
+  "projectOwner": "ThundeRatz",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md",
+    "README.pt-br.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "gitmoji",
+  "contributors": [
+    {
+      "login": "LucasHaug",
+      "name": "Lucas Haug",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/39196309?v=4",
+      "profile": "https://github.com/LucasHaug",
+      "contributions": [
+        "code",
+        "doc",
+        "test",
+        "translation"
+      ]
+    },
+    {
+      "login": "lucastrschneider",
+      "name": "Lucas Schneider",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/50970346?v=4",
+      "profile": "https://github.com/lucastrschneider",
+      "contributions": [
+        "code",
+        "doc",
+        "test",
+        "translation",
+        "review"
+      ]
+    },
+    {
+      "login": "d-nery",
+      "name": "Daniel Nery",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/12468184?v=4",
+      "profile": "https://github.com/d-nery",
+      "contributions": [
+        "code",
+        "review"
+      ]
+    },
+    {
+      "login": "FelipeGdM",
+      "name": "Felipe Gomes de Melo",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1054087?v=4",
+      "profile": "https://github.com/FelipeGdM",
+      "contributions": [
+        "ideas",
+        "review"
+      ]
+    },
+    {
+      "login": "Berbardo",
+      "name": "Bernardo Coutinho",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/48636340?v=4",
+      "profile": "https://github.com/Berbardo",
+      "contributions": [
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}
