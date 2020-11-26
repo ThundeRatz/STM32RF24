@@ -41,7 +41,7 @@ typedef enum rf24_status {
     RF24_BUFFER_TOO_SMALL = 5,
     RF24_INTERRUPT_NOT_CLEARED = 6,
     RF24_INVALID_PARAMETERS = 7,
-    RF24_UNKNOWN_ERRO = 8,
+    RF24_UNKNOWN_ERROR = 8,
 } rf24_status_t;
 
 /**
@@ -151,6 +151,8 @@ rf24_status_t rf24_set_channel(rf24_dev_t* p_dev, uint8_t ch);
  * @param p_dev Pointer to rf24 device.
  *
  * @return Channel value.
+ * @retval 0xFF Returns 0xFF when got an error, because
+ *         channel value can't be bigger than 125.
  */
 uint8_t rf24_get_channel(rf24_dev_t* p_dev);
 
@@ -202,7 +204,7 @@ rf24_status_t rf24_set_output_power(rf24_dev_t* p_dev, rf24_output_power_t outpu
 rf24_status_t rf24_flush_rx(rf24_dev_t* p_dev);
 
 /**
- * @brief Flushes transmiter FIFO.
+ * @brief Flushes transmitter FIFO.
  *
  * @param p_dev Pointer to rf24 device.
  *
@@ -211,7 +213,7 @@ rf24_status_t rf24_flush_rx(rf24_dev_t* p_dev);
 rf24_status_t rf24_flush_tx(rf24_dev_t* p_dev);
 
 /**
- * @brief Enables the device transmition pipe.
+ * @brief Enables the device transmission pipe.
  *
  * @param p_dev     Pointer to rf24 device.
  * @param address   Transmitter pipe address.
@@ -326,8 +328,8 @@ rf24_status_t rf24_write_continuously(rf24_dev_t* p_dev, uint8_t* buff, uint8_t 
  * @param p_dev Pointer to rf24 device.
  *
  * @return Status register value.
- * @retval 0xFF Returns 0xFF when got an error, because status bit
- *              7 only allows 0, so 0xFF is an invalid value.
+ * @retval 0xFF Returns 0xFF when got an error, because status
+ *         bit 7 only allows 0, so 0xFF is an invalid value.
  */
 nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev);
 
@@ -357,7 +359,7 @@ rf24_irq_t rf24_irq_callback(rf24_dev_t* p_dev);
  *
  * @note This function must be implemented by the user.
  *
- * @param ms Delay in miliseconds.
+ * @param ms Delay in milliseconds.
  *
  * @return @ref rf24_status.
  */
