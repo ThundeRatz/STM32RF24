@@ -16,7 +16,7 @@ Para a versão em PT-BR 🇧🇷 desse documento, [veja aqui](./README.pt-br.md)
 - [➕ Requirements](#-requirements)
 - [📦 Git Submodules](#-git-submodules)
   - [💥 Adding a submodule](#-adding-a-submodule)
-  - [✅ Initializing a existing submodule](#-initializing-a-existing-submodule)
+  - [✅ Initializing an existing submodule](#-initializing-a-existing-submodule)
 - [📁 Repository Structure](#-repository-structure)
 - [📝 Documentation](#-documentation)
 - [🎨 Formatting](#-formatting)
@@ -43,7 +43,7 @@ This library was made to be used as a submodule in the [STM32ProjectTemplate](ht
 
 This library does not require any extra requirements to function, in addition to those already listed [STM32ProjectTemplate requirements](https://github.com/ThundeRatz/STM32ProjectTemplate#requisitos).
 
-However, if you want to generate the documentation, as described in the section [📝 Documentation](#-documentation), it is necessary to install Doxygen. In Ubuntu it is possible to install it with the following command:
+However, if you want to generate the documentation, as described in the section [📝 Documentation](#-documentation), it is necessary to install Doxygen. In Ubuntu, it is possible to install it with the following command:
 
 ```bash
 sudo apt install doxygen
@@ -57,7 +57,7 @@ Besides that, for formatting `uncrustify` is used, as described in the section [
 sudo apt install uncrustify
 ```
 
-On Windows, download the .zip from [SourceForge](https://sourceforge.net/projects/uncrustify/files/). Add the location of the executable in the `PATH` environment variable.
+On Windows, download the `.zip` from [SourceForge](https://sourceforge.net/projects/uncrustify/files/). Add the location of the executable in the `PATH` environment variable.
 
 
 ## 📦 Git Submodules
@@ -84,7 +84,7 @@ git submodule add --name STM32RF24 https://github.com/ThundeRatz/STM32RF24.git l
 git submodule add --name STM32RF24 git@github.com:ThundeRatz/STM32RF24.git lib/STM32RF24
 ```
 
-### ✅ Initializing a existing submodule
+### ✅ Initializing an existing submodule
 
 When cloning a repository that already has submodules, it is necessary to clone the repositories of that submodule. This can be done in two ways, by cloning together with the project repository or after you have already cloned.
 
