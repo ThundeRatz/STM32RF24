@@ -106,6 +106,7 @@ git submodule update --init
 
 The repository contains the following folders:
 
+- **assets/** → Images and `.css` files for documentation
 - **docs/** → Documentation files
 - **inc/** → Header files
 - **src/** → Source files

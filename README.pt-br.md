@@ -105,6 +105,7 @@ git submodule update --init
 
 O repositório contém as seguintes pastas:
 
+- **assets/** → Imagens e arquivos `.css` para documentação
 - **docs/** → Arquivos de documentação
 - **inc/** → Arquivos de cabeçalho
 - **src/** → Arquivos de código fonte
