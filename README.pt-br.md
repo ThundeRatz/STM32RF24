@@ -193,7 +193,7 @@ A biblioteca possui diferentes funções para configurar parâmetros do módulo,
 
 A comunicação entre dois módulos pode acontecer com _acknowledgment_ (ACK) ou sem. Utilizar ACK ajuda a evitar a perda de pacotes enviados. Ao se habilitar o ACK, o seu receptor, ao receber um pacote válido, enviará para o transmissor um pacote de ACK, caso contrário não enviará nada. Por sua vez, o transmissor, após enviar um pacote, ficará esperando receber um pacote de ACK por um determinado tempo, caso o tempo se esgote sem receber o ACK, ele enviará novamente o pacote que tinha enviado. Vários diagramas de transação diferentes podem ser vistos a partir da página 40, item 7.9 do [datasheet](docs/Nordic_Semiconductor-NRF24L01-datasheet.pdf). Nesse tutorial se mostrará como fazer a comunicação dos módulos com ACK, também se considerará que só há um transmissor e um receptor, porém é possível haver mais módulos.
 
-Além do que será mostrado nas subseções abaixo, para o  funcionamento da biblioteca é necessário, em um dos seus arquivos `.c` que inclui o arquivo `rf24.h`, definir a seguinte função:
+Além do que será mostrado nas subseções abaixo, para o funcionamento da biblioteca é necessário, em um dos seus arquivos `.c` que inclui o arquivo `rf24.h`, definir a seguinte função:
 
 ```C
 /**
@@ -393,7 +393,7 @@ if ((device_status = rf24_available(p_dev, NULL)) == RF24_SUCCESS) {
 
 ### 🐛 Depuração
 
-Para depurar o seu código é possível utilizar as funções do `rf24_debug.c/.h`, porém para isso também é necessário definir uma função `printf`. Para facilitar o uso, recomendo adicionar a biblioteca [SEGGER_RTT](https://github.com/ThundeRatz/SEGGER_RTT) ao projeto. Após adicioná-la, tendo chamado as funções de depuração em seu código, para ver o que está sendo "impresso" pelas funções, rode no terminal, estando na raiz de seu projeto:
+Para depurar o seu código é possível utilizar as funções do `rf24_debug.c/.h`, porém, para isso, também é necessário definir uma função `printf`. Para facilitar o uso, recomendo adicionar a biblioteca [SEGGER_RTT](https://github.com/ThundeRatz/SEGGER_RTT) ao projeto. Após adicioná-la, tendo chamado as funções de depuração em seu código, para ver o que está sendo "impresso" pelas funções, rode no terminal, estando na raiz de seu projeto:
 
 ```C
 make rtt
