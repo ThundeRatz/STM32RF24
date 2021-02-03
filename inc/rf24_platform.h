@@ -84,8 +84,8 @@ rf24_platform_status_t rf24_platform_disable(rf24_platform_t* p_setup);
 /**
  * @brief Send SPI command.
  *
- * @param p_setup    Pointer to rf24 insta  setup.nce
- * @param command   SPI command @ref nrf24l01_spi_commands
+ * @param p_setup Pointer to rf24 instance setup.
+ * @param command SPI command @ref nrf24l01_spi_commands
  *
  * @return @ref rf24_platform_status.
  */
@@ -94,8 +94,8 @@ rf24_platform_status_t rf24_platform_send_command(rf24_platform_t* p_setup, nrf2
 /**
  * @brief Gets status register value.
  *
- * @param p_setup         Pointer to rf24   setup.instance
- * @param p_status_reg   Pointer to a variable to store the status.
+ * @param p_setup Pointer to rf24 instance setup.
+ * @param p_status_reg Pointer to a variable to store the status.
  *
  * @return @ref rf24_platform_status.
  */
@@ -104,10 +104,10 @@ rf24_platform_status_t rf24_platform_get_status(rf24_platform_t* p_setup, nrf24l
 /**
  * @brief Read register from device.
  *
- * @param p_setup    Pointer to rf24 insta  setup.nce
- * @param reg       Register to be read
- * @param buff      Buffer to store register value
- * @param len       Buffer lenght
+ * @param p_setup Pointer to rf24 instance setup.
+ * @param reg Register to be read
+ * @param buff Buffer to store register value
+ * @param len Buffer lenght
  *
  * @return @ref rf24_platform_status.
  */
@@ -117,8 +117,8 @@ rf24_platform_status_t rf24_platform_read_register(rf24_platform_t* p_setup, nrf
 /**
  * @brief Read a 8 bit register from device.
  *
- * @param p_setup      Pointer to rf24 ins  setup.tance
- * @param reg         Register to be read
+ * @param p_setup Pointer to rf24 instance setup.
+ * @param reg Register to be read
  * @param p_reg_value Pointer to a variable to store the value from the register.
  *
  * @return Register value.
@@ -129,10 +129,10 @@ rf24_platform_status_t rf24_platform_read_reg8(rf24_platform_t* p_setup, nrf24l0
 /**
  * @brief Write device register.
  *
- * @param p_setup    Pointer to rf24 insta  setup.nce
- * @param reg       Register to be written
- * @param buff      Buffer to store register value
- * @param len       Buffer lenght
+ * @param p_setup Pointer to rf24 instance setup.
+ * @param reg Register to be written
+ * @param buff Buffer to store register value
+ * @param len Buffer lenght
  *
  * @return @ref rf24_platform_status.
  */
@@ -142,9 +142,9 @@ rf24_platform_status_t rf24_platform_write_register(rf24_platform_t* p_setup, nr
 /**
  * @brief Write a 8 bit device register.
  *
- * @param p_setup    Pointer to rf24 insta  setup.nce
- * @param reg       Register to be written
- * @param value     Value to writein theregister
+ * @param p_setup Pointer to rf24 instance setup.
+ * @param reg Register to be written
+ * @param value Value to be written in the register
  *
  * @return @ref rf24_platform_status.
  */
@@ -153,9 +153,9 @@ rf24_platform_status_t rf24_platform_write_reg8(rf24_platform_t* p_setup, nrf24l
 /**
  * @brief Read a payload from device Rx FIFO.
  *
- * @param p_setup    Pointer to rf24 insta  setup.nce
- * @param buff      Buffer to store the payload data
- * @param len       Payload lenght
+ * @param p_setup Pointer to rf24 instance setup.
+ * @param buff Buffer to store the payload data
+ * @param len Payload lenght
  *
  * @return @ref rf24_platform_status.
  */
@@ -164,10 +164,10 @@ rf24_platform_status_t rf24_platform_read_payload(rf24_platform_t* p_setup, uint
 /**
  * @brief Write payload in device Tx FIFO.
  *
- * @param p_setup           Pointer to rf  setup.24 instance
- * @param buff              Buffer to store the payload data
- * @param len               Payload lenght
- * @param enable_auto_ack   Tells the receiver if a acknowledgement packet is expected
+ * @param p_setup Pointer to rf24 instance setup.
+ * @param buff Buffer to store the payload data
+ * @param len Payload lenght
+ * @param enable_auto_ack Tells the receiver if a acknowledgement packet is expected
  *
  * @note To use the enable_auto_ack feature, the user must set the EN_DYN_ACK bit
  *       from the FEATURE register. This will allow to control which payload
