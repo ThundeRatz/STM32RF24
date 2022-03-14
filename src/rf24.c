@@ -737,6 +737,7 @@ nrf24l01_reg_status_t rf24_get_status(rf24_dev_t* p_dev) {
 }
 
 rf24_status_t rf24_set_irq_configuration(rf24_dev_t* p_dev, rf24_irq_t irq_config) {
+    rf24_status_t dev_status = RF24_SUCCESS;
     nrf24l01_reg_config_t config_reg;
 
     rf24_platform_status_t platform_status =
@@ -750,7 +751,9 @@ rf24_status_t rf24_set_irq_configuration(rf24_dev_t* p_dev, rf24_irq_t irq_confi
         platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, config_reg.value);
     }
 
-    return platform_status;
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+
+    return dev_status;
 }
 
 rf24_irq_t rf24_irq_callback(rf24_dev_t* p_dev) {
