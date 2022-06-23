@@ -186,7 +186,7 @@ rf24_status_t rf24_init(rf24_dev_t* p_dev) {
 
         if (dev_status == RF24_SUCCESS) {
             reg_config.prim_rx = 0;
-            rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+            platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
             dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
         }
     }
@@ -215,9 +215,11 @@ rf24_status_t rf24_power_up(rf24_dev_t* p_dev) {
         }
     }
 
-    reg_config.pwr_up = 1;
-    rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
-    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    if (dev_status == RF24_SUCCESS) {
+        reg_config.pwr_up = 1;
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
     rf24_delay(5);
 
@@ -238,10 +240,12 @@ rf24_status_t rf24_power_down(rf24_dev_t* p_dev) {
         }
     }
 
-    rf24_platform_disable(&(p_dev->platform_setup));
-    reg_config.pwr_up = 0;
-    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
-    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    if (dev_status == RF24_SUCCESS) {
+        rf24_platform_disable(&(p_dev->platform_setup));
+        reg_config.pwr_up = 0;
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_CONFIG, reg_config.value);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
     return dev_status;
 }
@@ -405,12 +409,16 @@ rf24_status_t rf24_open_writing_pipe(rf24_dev_t* p_dev, uint8_t* address) {
                                                    p_dev->addr_width);
     dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
-    platform_status = rf24_platform_write_register(&(p_dev->platform_setup), NRF24L01_REG_TX_ADDR, address,
-                                                   p_dev->addr_width);
-    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_write_register(&(p_dev->platform_setup), NRF24L01_REG_TX_ADDR, address,
+                                                    p_dev->addr_width);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
-    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RX_PW_P0, p_dev->payload_size);
-    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    if (dev_status == RF24_SUCCESS) {
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_RX_PW_P0, p_dev->payload_size);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+    }
 
     return dev_status;
 }
@@ -437,9 +445,11 @@ rf24_status_t rf24_open_reading_pipe(rf24_dev_t* p_dev, uint8_t pipe_number, uin
 
         dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
-        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), m_child_payload_size[pipe_number],
-                                                   p_dev->payload_size);
-        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+        if (dev_status == RF24_SUCCESS) {
+            platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), m_child_payload_size[pipe_number],
+                                                    p_dev->payload_size);
+            dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
+        }
     } else {
         dev_status = RF24_INVALID_PARAMETERS;
     }
@@ -610,8 +620,10 @@ rf24_status_t rf24_available(rf24_dev_t* p_dev, uint8_t* pipe_number) {
         dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
     }
 
-    if (reg_fifo_status.rx_empty) {
-        dev_status = RF24_RX_FIFO_EMPTY;
+    if (dev_status == RF24_SUCCESS) {
+        if (reg_fifo_status.rx_empty) {
+            dev_status = RF24_RX_FIFO_EMPTY;
+        }
     }
 
     if (dev_status == RF24_SUCCESS) {
@@ -634,10 +646,8 @@ rf24_status_t rf24_read(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len) {
 
     nrf24l01_reg_status_t status_reg = rf24_get_status(p_dev);
 
-    if (dev_status == RF24_SUCCESS) {
-        platform_status = rf24_platform_read_payload(&(p_dev->platform_setup), buff, len);
-        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
-    }
+    platform_status = rf24_platform_read_payload(&(p_dev->platform_setup), buff, len);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
     // Clears data ready interruption bit. But data ready utility still not implemented.
     if (dev_status == RF24_SUCCESS) {
@@ -659,10 +669,8 @@ rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool ena
         return RF24_TX_FIFO_FULL;
     }
 
-    if (dev_status == RF24_SUCCESS) {
-        platform_status = rf24_platform_write_payload(&(p_dev->platform_setup), buff, len, enable_auto_ack);
-        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
-    }
+    platform_status = rf24_platform_write_payload(&(p_dev->platform_setup), buff, len, enable_auto_ack);
+    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
     if (dev_status == RF24_SUCCESS) {
         rf24_platform_enable(&(p_dev->platform_setup));
@@ -676,20 +684,28 @@ rf24_status_t rf24_write(rf24_dev_t* p_dev, uint8_t* buff, uint8_t len, bool ena
         rf24_platform_disable(&(p_dev->platform_setup));
     }
 
-    // Max retries exceeded
-    if (status_reg.max_rt) {
-        dev_status = RF24_MAX_RETRANSMIT;
+    if (dev_status == RF24_SUCCESS) {
+        // Max retries exceeded
+        if (status_reg.max_rt) {
+            dev_status = RF24_MAX_RETRANSMIT;
 
-        status_reg.max_rt = 1;  // Datasheet says to write 1 to clear the interruption bit.
-        rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
-        rf24_flush_tx(p_dev);  // Only going to be 1 packet in the FIFO at a time using this method, so just flush.
+            status_reg.max_rt = 1;  // Datasheet says to write 1 to clear the interruption bit.
+            platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
+            dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_ERROR_CONTROL_INTERFACE);
 
-        return dev_status;
+            if (dev_status == RF24_SUCCESS) {
+                dev_status = rf24_flush_tx(p_dev);  // Only going to be 1 packet in the FIFO at a time using this method, so just flush.
+            }
+
+            return dev_status;
+        }
     }
 
-    status_reg.tx_ds = 1;
-    platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
-    dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_INTERRUPT_NOT_CLEARED);
+    if (dev_status == RF24_SUCCESS) {
+        status_reg.tx_ds = 1;
+        platform_status = rf24_platform_write_reg8(&(p_dev->platform_setup), NRF24L01_REG_STATUS, status_reg.value);
+        dev_status = (platform_status == RF24_PLATFORM_SUCCESS) ? (RF24_SUCCESS) : (RF24_INTERRUPT_NOT_CLEARED);
+    }
 
     return dev_status;
 }
