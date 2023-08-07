@@ -109,7 +109,7 @@ rf24_platform_status_t rf24_platform_read_register(rf24_platform_t* p_setup, nrf
     hal_status = HAL_SPI_TransmitReceive(p_setup->hspi, &command, &(status_reg.value), 1, p_setup->spi_timeout);
 
     if (hal_status == HAL_OK) {
-        HAL_SPI_Receive(p_setup->hspi, buff, len, p_setup->spi_timeout);
+        hal_status = HAL_SPI_Receive(p_setup->hspi, buff, len, p_setup->spi_timeout);
     }
 
     rf24_end_transaction(p_setup);
@@ -135,7 +135,7 @@ rf24_platform_status_t rf24_platform_write_register(rf24_platform_t* p_setup, nr
     hal_status = HAL_SPI_TransmitReceive(p_setup->hspi, &command, &(status_reg.value), 1, p_setup->spi_timeout);
 
     if (hal_status == HAL_OK) {
-        HAL_SPI_Transmit(p_setup->hspi, buff, len, p_setup->spi_timeout);
+        hal_status = HAL_SPI_Transmit(p_setup->hspi, buff, len, p_setup->spi_timeout);
     }
 
     rf24_end_transaction(p_setup);
@@ -159,7 +159,7 @@ rf24_platform_status_t rf24_platform_read_payload(rf24_platform_t* p_setup, uint
     hal_status = HAL_SPI_TransmitReceive(p_setup->hspi, &command, &(status_reg.value), 1, p_setup->spi_timeout);
 
     if (hal_status == HAL_OK) {
-        HAL_SPI_Receive(p_setup->hspi, buff, len, p_setup->spi_timeout);
+        hal_status = HAL_SPI_Receive(p_setup->hspi, buff, len, p_setup->spi_timeout);
     }
 
     rf24_end_transaction(p_setup);
@@ -180,7 +180,7 @@ rf24_platform_status_t rf24_platform_write_payload(rf24_platform_t* p_setup, uin
     hal_status = HAL_SPI_TransmitReceive(p_setup->hspi, &command, &(status_reg.value), 1, p_setup->spi_timeout);
 
     if (hal_status == HAL_OK) {
-        HAL_SPI_Transmit(p_setup->hspi, buff, len, p_setup->spi_timeout);
+        hal_status = HAL_SPI_Transmit(p_setup->hspi, buff, len, p_setup->spi_timeout);
     }
 
     rf24_end_transaction(p_setup);
