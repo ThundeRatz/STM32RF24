@@ -111,7 +111,7 @@ The repository contains the following folders:
 - **inc/** → Header files
 - **src/** → Source files
 
-At the root of the repository, in addition to the files containing the code of conduct, contribution guidelines, README and license, there is the `sources`.mk` file, which is responsible for making it possible for the library files to be found when compiling the code. There is also a `Doxyfile` to generate the documentation. Another relevant file is `uncrustify.cfg` which is used to format the files.
+At the root of the repository, in addition to the files containing the code of conduct, contribution guidelines, README and license, there is the `sources.mk` file, which is responsible for making it possible for the library files to be found when compiling the code. There is also a `Doxyfile` to generate the documentation. Another relevant file is `uncrustify.cfg` which is used to format the files.
 
 ## 📝 Documentation
 
